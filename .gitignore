@@ -1,0 +1,7 @@
+*.pyc
+venv
+x*
+*.db
+.DS_Store
+logs*
+.idea
