@@ -1,18 +1,17 @@
 from datetime import datetime
-from blog import db
+from blog import db, app
 
 
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    email = db.Column(db.String(120), nullable=False, unique=True)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+# class Users(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(200), nullable=False)
+#     email = db.Column(db.String(120), nullable=False, unique=True)
+#     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+#
+#     def __repr__(self):
+#         return '<Name %r>' % self.name
 
-    def __repr__(self):
-        return '<Name %r>' % self.name
 
-
-'''
 class BaseModel(db.Model):
     __abstract__ = True
     add_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -53,4 +52,3 @@ class Tag(BaseModel):
 
     def __repr__(self):
         return self.name
-'''
