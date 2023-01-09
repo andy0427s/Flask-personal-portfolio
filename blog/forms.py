@@ -11,4 +11,5 @@ class NameForm(FlaskForm):
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
+    color = StringField("Favorite Color")
     submit = SubmitField("Submit")
