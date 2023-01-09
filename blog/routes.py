@@ -1,6 +1,7 @@
 from flask import render_template, flash
 from blog import app, db
-from blog.forms import NamerForm
+from blog.forms import UserForm, NameForm
+from blog.models import Users
 
 
 @app.route('/')
@@ -27,7 +28,7 @@ def page_not_found(e):
 @app.route('/name', methods=['GET', 'POST'])
 def name():
     name = None
-    form = NamerForm()
+    form = NameForm()
     if form.validate_on_submit():
         name = form.name.data
         form.name.data = ""
@@ -35,3 +36,24 @@ def name():
     return render_template("name.html",
                            name=name,
                            form=form)
+
+
+@app.route('/user/add', methods=['GET', 'POST'])
+def add_user():
+    name = None
+    form = UserForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first
+        if user is None:
+            user = Users(name=form.name.data, email=form.email.data)
+            db.session.add(user)
+            db.session.commit()
+        name = form.name.data
+        form.name.data = ''
+        form.email.data = ''
+        flash("User Added Successfully!")
+    our_users = Users.query.order_by(Users.date_added)
+    return render_template("add_user.html",
+                           name=name,
+                           form=form,
+                           our_users=our_users)
