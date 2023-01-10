@@ -1,5 +1,5 @@
 from flask import render_template, flash, request, redirect, url_for
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from blog import app, db, login_manager
@@ -68,6 +68,7 @@ def add_user():
 
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
     form = UserForm()
     name_to_update = Users.query.get_or_404(id)
@@ -75,6 +76,7 @@ def update(id):
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
         name_to_update.color = request.form['color']
+        name_to_update.username = request.form['username']
         try:
             db.session.commit()
             flash("User Updated Successfully")
@@ -117,10 +119,12 @@ def delete(id):
 
 
 @app.route('/add-post', methods=['GET', 'POST'])
+@login_required
 def add_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Posts(title=form.title.data, content=form.content.data, author=form.author.data)
+        poster = current_user.id
+        post = Posts(title=form.title.data, content=form.content.data, poster_id=poster)
         form.title.data = ''
         form.content.data = ''
         form.author.data = ''
@@ -144,35 +148,48 @@ def post(id):
 
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_post(id):
     post = Posts.query.get_or_404(id)
     form = PostForm()
     if form.validate_on_submit():
         post.title = form.title.data
-        post.author = form.author.data
         post.content = form.content.data
         db.session.add(post)
         db.session.commit()
         flash("Post Has Been Updated!")
         return redirect(url_for('post', id=post.id))
-    form.title.data = post.title
-    form.author.data = post.author
-    form.content.data = post.content
-    return render_template('edit_post.html', form=form)
 
-
-@app.route('/posts/delete/<int:id>')
-def delete_post(id):
-    post_to_delete = Posts.query.get_or_404(id)
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
-        flash('Blog Post Was Deleted!')
+    if current_user.id == post.poster_id:
+        form.title.data = post.title
+        form.content.data = post.content
+        return render_template('edit_post.html', form=form)
+    else:
+        flash("You Aren't Authorized To Edit that Post")
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 
-    except:
-        flash("Whoops! There was a problem, please try again!")
+
+@app.route('/posts/delete/<int:id>')
+@login_required
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    id = current_user.id
+    if id == post_to_delete.poster.id:
+
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash('Blog Post Was Deleted!')
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html", posts=posts)
+
+        except:
+            flash("Whoops! There was a problem, please try again!")
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html", posts=posts)
+    else:
+        flash('You Aren\'t Authorized To Delete That Post!')
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 
@@ -199,7 +216,7 @@ def login():
 def logout():
     logout_user()
     flash('You Have Been Logged Out! Thanks For Using Our Service~ ')
-    return render_template(url_for('login'))
+    return redirect(url_for('login'))
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])

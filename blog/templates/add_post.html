@@ -10,6 +10,9 @@
     </div>
 {% endfor %}
 
+
+{% if current_user.is_authenticated %}
+
 <h1>Add Blog Post...</h1>
     <div class="shadow p-3 mb-5 bg-body rounded">
 
@@ -20,10 +23,6 @@
             {{ form.title(class="form-control") }}
             <br/>
 
-            {{ form.author.label(class="form-label") }}
-            {{ form.author(class="form-control") }}
-            <br/>
-
             {{ form.content.label(class="form-label") }}
             {{ form.content(class="form-control", rows='10') }}
             <br/>
@@ -31,6 +30,12 @@
             {{ form.submit(class="btn btn-primary") }}
         </form>
     </div>
+{% else %}
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
 
+<a href="{{ url_for('login') }}">Login Here</a>
+
+{% endif %}
 
 {% endblock content %}
