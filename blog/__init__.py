@@ -1,6 +1,9 @@
 from flask import Flask
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '<52f2f7bbd0899acac4c4cc57bad53e4bc96af3abc9128ff2>'
@@ -16,4 +19,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://c22011528:Twente0508$@c
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Flask Login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
 from blog import routes
+

@@ -1,7 +1,10 @@
-from flask import render_template, flash, request
-from blog import app, db
-from blog.forms import UserForm, NameForm
-from blog.models import Users
+from flask import render_template, flash, request, redirect, url_for
+from flask_login import login_required, login_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from blog import app, db, login_manager
+from blog.forms import UserForm, NameForm, PostForm, LoginForm
+from blog.models import Users, Posts
 
 
 @app.route('/')
@@ -45,13 +48,17 @@ def add_user():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
-            user = Users(name=form.name.data, email=form.email.data, color=form.color.data)
+            hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
+            user = Users(name=form.name.data, username=form.username.data, email=form.email.data, color=form.color.data,
+                         password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data = ''
+        form.username.data = ''
         form.email.data = ''
         form.color.data = ''
+        form.password_hash.data = ''
         flash("User Added Successfully!")
     our_users = Users.query.order_by(Users.date_added)
     return render_template("add_user.html",
@@ -82,4 +89,125 @@ def update(id):
     else:
         return render_template("update.html",
                                form=form,
-                               name_to_update=name_to_update)
+                               name_to_update=name_to_update,
+                               id=id)
+
+
+@app.route('/delete/<int:id>')
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+    name = None
+    form = UserForm()
+
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash("User Deleted Successfully!")
+        our_users = Users.query.order_by(Users.date_added)
+        return render_template("add_user.html",
+                               name=name,
+                               form=form,
+                               our_users=our_users)
+    except:
+        flash("Whoops! There was a problem deleting user, try again!")
+        return render_template("add_user.html",
+                               name=name,
+                               form=form,
+                               our_users=our_users)
+
+
+@app.route('/add-post', methods=['GET', 'POST'])
+def add_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Posts(title=form.title.data, content=form.content.data, author=form.author.data)
+        form.title.data = ''
+        form.content.data = ''
+        form.author.data = ''
+        db.session.add(post)
+        db.session.commit()
+        flash("Blog Post Submitted Successfully!")
+
+    return render_template("add_post.html", form=form)
+
+
+@app.route('/posts')
+def posts():
+    posts = Posts.query.order_by(Posts.date_posted)
+    return render_template("posts.html", posts=posts)
+
+
+@app.route('/posts/<int:id>')
+def post(id):
+    post = Posts.query.get_or_404(id)
+    return render_template('post.html', post=post)
+
+
+@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+def edit_post(id):
+    post = Posts.query.get_or_404(id)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.author = form.author.data
+        post.content = form.content.data
+        db.session.add(post)
+        db.session.commit()
+        flash("Post Has Been Updated!")
+        return redirect(url_for('post', id=post.id))
+    form.title.data = post.title
+    form.author.data = post.author
+    form.content.data = post.content
+    return render_template('edit_post.html', form=form)
+
+
+@app.route('/posts/delete/<int:id>')
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash('Blog Post Was Deleted!')
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html", posts=posts)
+
+    except:
+        flash("Whoops! There was a problem, please try again!")
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html", posts=posts)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(username=form.username.data).first()
+        if user:
+            if check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                flash('Login Successfully!')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Wrong Password - Try Again!')
+        else:
+            flash('The User Doesn\'t Exist! - Try Again...')
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    flash('You Have Been Logged Out! Thanks For Using Our Service~ ')
+    return render_template(url_for('login'))
+
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
