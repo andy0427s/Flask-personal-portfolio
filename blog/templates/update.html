@@ -14,6 +14,7 @@
     <h1>Update User...</h1>
     <br>
 
+
     <div class="shadow p-3 mb-5 bg-body rounded">
 
         <form action="/update/{{ name_to_update.id }}" method="POST">
@@ -31,10 +32,14 @@
             {{ form.email(class="form-control", value=name_to_update.email) }}
             <br/>
 
-            {{ form.color.label(class="form-label") }}
-            {{ form.color(class="form-control", value=name_to_update.color) }}
+            {{ form.about_author.label(class="form-label") }}
+            <textarea name="about_author" class="form-control">{{ name_to_update.about_author }}
+            </textarea>
             <br/>
 
+            {{ form.profile_pic.label(class="form-label") }}
+            {{ form.profile_pic(class="form-control", value=name_to_update.profile_pic) }}
+            <br/>
 
             {{ form.submit(class="btn btn-primary") }}
             <a href="{{ url_for('delete', id=id )}}" class="btn btn-danger">Delete</a>
@@ -51,6 +56,7 @@
     </div>
     <h2>Access Denied!</h2>
     <p>Sorry, you cannot access this user profile...</p>
+
 {% endif %}
 
 {% endblock content %}

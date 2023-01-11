@@ -3,7 +3,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from blog import app, db, login_manager
-from blog.forms import UserForm, NameForm, PostForm, LoginForm
+from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm
 from blog.models import Users, Posts
 
 
@@ -49,7 +49,7 @@ def add_user():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
-            user = Users(name=form.name.data, username=form.username.data, email=form.email.data, color=form.color.data,
+            user = Users(name=form.name.data, username=form.username.data, email=form.email.data,
                          password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
@@ -57,7 +57,6 @@ def add_user():
         form.name.data = ''
         form.username.data = ''
         form.email.data = ''
-        form.color.data = ''
         form.password_hash.data = ''
         flash("User Added Successfully!")
     our_users = Users.query.order_by(Users.date_added)
@@ -75,19 +74,22 @@ def update(id):
     if request.method == 'POST':
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.color = request.form['color']
         name_to_update.username = request.form['username']
+        name_to_update.about_author = request.form['about_author']
         try:
             db.session.commit()
             flash("User Updated Successfully")
-            return render_template("update.html",
-                                   form=form,
-                                   name_to_update=name_to_update)
+            return redirect(url_for('dashboard'))
+            # return render_template("update.html",
+            #                        form=form,
+            #                        name_to_update=name_to_update,
+            #                        id=id)
         except:
             flash("Error! Looks like there was a problem...try again!")
             return render_template("update.html",
                                    form=form,
-                                   name_to_update=name_to_update)
+                                   name_to_update=name_to_update,
+                                   id=id)
     else:
         return render_template("update.html",
                                form=form,
@@ -228,3 +230,34 @@ def dashboard():
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
+
+
+@app.route('/search', methods=['POST'])
+def search():
+    form = SearchForm()
+    posts = Posts.query
+    if form.validate_on_submit():
+        post.searched = form.searched.data
+        posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
+        posts = posts.order_by(Posts.title).all()
+        return render_template("search.html",
+                               form=form,
+                               searched=post.searched,
+                               posts=posts)
+
+
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
+
+
+@app.route('/admin')
+@login_required
+def admin():
+    id = current_user.id
+    if id == 1:
+        return render_template("admin.html")
+    else:
+        flash("Sorry, you have to be Admin to access this page")
+        return redirect(url_for('dashboard'))
