@@ -8,6 +8,11 @@ from flask_ckeditor import CKEditor
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '<52f2f7bbd0899acac4c4cc57bad53e4bc96af3abc9128ff2>'
 
+
+# Uploaded file folder setting
+UPLOAD_FOLDER = 'blog/static/img/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 # DB Connection
 
 # suppress SQLAlchemy warning

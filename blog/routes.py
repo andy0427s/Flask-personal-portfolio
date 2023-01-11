@@ -1,10 +1,14 @@
 from flask import render_template, flash, request, redirect, url_for
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
 from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm
 from blog.models import Users, Posts
+
+import os
+import uuid as uuid
 
 
 @app.route('/')
@@ -76,20 +80,35 @@ def update(id):
         name_to_update.email = request.form['email']
         name_to_update.username = request.form['username']
         name_to_update.about_author = request.form['about_author']
-        try:
+
+        if request.files['profile_pic']:
+            name_to_update.profile_pic = request.files['profile_pic']
+            # Generate a unique/secure filename
+            pic_filename = secure_filename(name_to_update.profile_pic.filename)
+            pic_name = str(uuid.uuid1()) + "_" + pic_filename
+            # Save the profile img to the static directory
+            # basedir = os.path.abspath(os.path.dirname(__file__))
+            name_to_update.profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+            # Save secured filename in db
+            name_to_update.profile_pic = pic_name
+            try:
+                db.session.commit()
+                flash("User Updated Successfully")
+                return redirect(url_for('dashboard'))
+                # return render_template("update.html",
+                #                        form=form,
+                #                        name_to_update=name_to_update,
+                #                        id=id)
+            except:
+                flash("Error! Looks like there was a problem...try again!")
+                return render_template("update.html",
+                                       form=form,
+                                       name_to_update=name_to_update,
+                                       id=id)
+        else:
             db.session.commit()
             flash("User Updated Successfully")
             return redirect(url_for('dashboard'))
-            # return render_template("update.html",
-            #                        form=form,
-            #                        name_to_update=name_to_update,
-            #                        id=id)
-        except:
-            flash("Error! Looks like there was a problem...try again!")
-            return render_template("update.html",
-                                   form=form,
-                                   name_to_update=name_to_update,
-                                   id=id)
     else:
         return render_template("update.html",
                                form=form,
@@ -98,26 +117,32 @@ def update(id):
 
 
 @app.route('/delete/<int:id>')
+@login_required
 def delete(id):
-    user_to_delete = Users.query.get_or_404(id)
-    name = None
-    form = UserForm()
+    if id == current_user.id:
 
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("User Deleted Successfully!")
-        our_users = Users.query.order_by(Users.date_added)
-        return render_template("add_user.html",
-                               name=name,
-                               form=form,
-                               our_users=our_users)
-    except:
-        flash("Whoops! There was a problem deleting user, try again!")
-        return render_template("add_user.html",
-                               name=name,
-                               form=form,
-                               our_users=our_users)
+        user_to_delete = Users.query.get_or_404(id)
+        name = None
+        form = UserForm()
+
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash("User Deleted Successfully!")
+            our_users = Users.query.order_by(Users.date_added)
+            return render_template("add_user.html",
+                                   name=name,
+                                   form=form,
+                                   our_users=our_users)
+        except:
+            flash("Whoops! There was a problem deleting user, try again!")
+            return render_template("add_user.html",
+                                   name=name,
+                                   form=form,
+                                   our_users=our_users)
+    else:
+        flash("Sorry, you can't delete that user!")
+        return redirect(url_for('dashboard'))
 
 
 @app.route('/add-post', methods=['GET', 'POST'])
@@ -162,7 +187,7 @@ def edit_post(id):
         flash("Post Has Been Updated!")
         return redirect(url_for('post', id=post.id))
 
-    if current_user.id == post.poster_id:
+    if current_user.id == post.poster_id or current_user.id == 1:
         form.title.data = post.title
         form.content.data = post.content
         return render_template('edit_post.html', form=form)
@@ -177,7 +202,7 @@ def edit_post(id):
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
     id = current_user.id
-    if id == post_to_delete.poster.id:
+    if id == post_to_delete.poster.id or id == 1:
 
         try:
             db.session.delete(post_to_delete)
