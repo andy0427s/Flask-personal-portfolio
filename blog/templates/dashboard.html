@@ -1,15 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-    <div class="alert alert-success alert-dismissible show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-{% endfor %}
-
 
     <h2>Dashboard</h2>
     <br/>
@@ -47,9 +38,9 @@
                         <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger btn-sm">Delete</a>
 
                     </div>
-                    <div class="col-4 profile-img">
+                    <div class="col-4">
                         {% if current_user.profile_pic %}
-                        <img src="{{ url_for('static', filename='img/' + current_user.profile_pic )}}" width="200">
+                        <img src="{{ url_for('static', filename='img/' + current_user.profile_pic )}}" width="200" class="float-right">
                         {% else %}
                         <img src="{{ url_for('static', filename='img/user.png')}}" width="200">
                         {% endif %}

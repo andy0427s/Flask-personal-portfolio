@@ -5,7 +5,28 @@ h1 {
 
 body {
     background: #f4f4f4;
-    /*font-family: "Raleway"*/
+    font-family: 'Catamaran', sans-serif;
+}
+
+.logo {
+    font-family: 'Catamaran', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    color: rgb(26, 32, 44);
+}
+
+.logo span {
+    color: #3371FF;
+}
+
+
+.top-btn button{
+    font-size: 1em;
+}
+
+.top-btn a {
+    display: inline;
+    padding: 0;
 }
 
 #vanta-canvas {
@@ -41,7 +62,4 @@ body {
     font-size: 13pt;
     padding: 10px 20px;
     transition: all 0.5s;
-}
-.profile-img {
-    text-align: right;
 }

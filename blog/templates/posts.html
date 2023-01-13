@@ -1,23 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-    <div class="alert alert-success alert-dismissible show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-{% endfor %}
 
 <br/>
 
 {% for post in posts %}
+
     <div class="shadow p-3 mb-5 bg-body rounded">
         <h2><a href="{{ url_for('post', id=post.id) }}">{{ post.title }}</a></h2>
         <small>By: {{ post.poster.name }}<br>
             {{ post.date_posted }}</small><br><br>
-        {{ post.content|safe }}<br><br>
+        {{ post.content|safe| truncate(100) }}<br><br>
         <a href="{{ url_for('post', id=post.id) }}",
            class="btn btn-outline-secondary btn-sm">View Post</a>
 
@@ -32,5 +25,8 @@
     </div>
     <br>
 {% endfor %}
+
+{{ render_pagination(posts, 'posts') }}
+<a id="button"></a>
 
 {% endblock content %}

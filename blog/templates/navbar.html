@@ -1,47 +1,47 @@
+<div class="navbar navbar-expand-sm navbar-dark bg-dark justify-content-between">
+        <div class="nav-item logo float-right">
+          <a href="{{ url_for('index') }}" class="navbar-link navbar-brand logo">T<span>/</span>L</a>
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="my-2 my-lg-0 justify-content-between top-btn">
+            {% if current_user.id == 1 %}
+                <a class="nav-link" href="{{ url_for('admin') }}"><button type="button" class="btn btn-outline-success btn-lg ml-sm-2">Admin</button></a>
+            {% endif %}
+            <a class="nav-link" href="{{ url_for('dashboard') }}"><button type="button" class="btn btn-outline-success btn-lg ml-sm-2">Dashboard</button></a>
+            <a class="nav-link" href="{{ url_for('logout') }}"><button type="button" class="btn btn-outline-success btn-lg ml-sm-2">Log Out</button></a>
+        </div>
+        {% else %}
+        <div class="my-2 my-lg-0 justify-content-between top-btn" >
+            <a class="nav-link" href="{{ url_for('register') }}"><button type="button" class="btn btn-outline-success btn-lg ml-sm-2">Sign Up</button></a>
+            <a class="nav-link" href="{{ url_for('login') }}"><button type="button" class="btn btn-outline-success btn-lg ml-sm-2">Log In</button></a>
+        </div>
+        {% endif %}
+
+</div>
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{{ url_for('index') }}">Flasker</a>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('user', name='Andy') }}">User profile</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('name') }}">Name</a>
-        </li>
-
-        {% if current_user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-          </li>
-          {% if current_user.id == 1 %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
-          </li>
-          {% endif %}
 
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('add_user') }}">Register</a>
+            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            <a class="nav-link" href="{{ url_for('posts') }}">Posts</a>
           </li>
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_post') }}">Add Blog Post</a>
-        </li>
+            {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_post') }}">Add Blog Post</a>
+                </li>
+            {% endif %}
 
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('posts') }}">Posts</a>
-        </li>
       </ul>
       <form method="POST" action="{{ url_for('search') }}" class="form-inline my-2 my-lg-0">
         {{ form.hidden_tag() }}

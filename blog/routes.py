@@ -17,11 +17,6 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/user/<name>')
-def user(name):
-    return render_template("user.html", user_name=name)
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
@@ -32,21 +27,8 @@ def page_not_found(e):
     return render_template("404.html"), 500
 
 
-@app.route('/name', methods=['GET', 'POST'])
-def name():
-    name = None
-    form = NameForm()
-    if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ""
-        flash("Form Submitted Successfully!")
-    return render_template("name.html",
-                           name=name,
-                           form=form)
-
-
 @app.route('/user/add', methods=['GET', 'POST'])
-def add_user():
+def register():
     name = None
     form = UserForm()
     if form.validate_on_submit():
@@ -62,9 +44,9 @@ def add_user():
         form.username.data = ''
         form.email.data = ''
         form.password_hash.data = ''
-        flash("User Added Successfully!")
+        flash("User Registered Successfully!", category="success")
     our_users = Users.query.order_by(Users.date_added)
-    return render_template("add_user.html",
+    return render_template("register.html",
                            name=name,
                            form=form,
                            our_users=our_users)
@@ -93,21 +75,21 @@ def update(id):
             name_to_update.profile_pic = pic_name
             try:
                 db.session.commit()
-                flash("User Updated Successfully")
+                flash("User Updated Successfully", category="success")
                 return redirect(url_for('dashboard'))
                 # return render_template("update.html",
                 #                        form=form,
                 #                        name_to_update=name_to_update,
                 #                        id=id)
             except:
-                flash("Error! Looks like there was a problem...try again!")
+                flash("Error! Looks like there was a problem...try again!", category="danger")
                 return render_template("update.html",
                                        form=form,
                                        name_to_update=name_to_update,
                                        id=id)
         else:
             db.session.commit()
-            flash("User Updated Successfully")
+            flash("User Updated Successfully", category="success")
             return redirect(url_for('dashboard'))
     else:
         return render_template("update.html",
@@ -128,20 +110,20 @@ def delete(id):
         try:
             db.session.delete(user_to_delete)
             db.session.commit()
-            flash("User Deleted Successfully!")
+            flash("User Deleted Successfully!", category="success")
             our_users = Users.query.order_by(Users.date_added)
-            return render_template("add_user.html",
+            return render_template("register.html",
                                    name=name,
                                    form=form,
                                    our_users=our_users)
         except:
-            flash("Whoops! There was a problem deleting user, try again!")
-            return render_template("add_user.html",
+            flash("Whoops! There was a problem deleting user, try again!", category="warning")
+            return render_template("register.html",
                                    name=name,
                                    form=form,
                                    our_users=our_users)
     else:
-        flash("Sorry, you can't delete that user!")
+        flash("Sorry, you can't delete that user!", category="danger")
         return redirect(url_for('dashboard'))
 
 
@@ -157,15 +139,21 @@ def add_post():
         form.author.data = ''
         db.session.add(post)
         db.session.commit()
-        flash("Blog Post Submitted Successfully!")
+        flash("Blog Post Submitted Successfully!", category="success")
 
     return render_template("add_post.html", form=form)
 
 
+# @app.route('/posts')
+# def posts():
+#     posts = Posts.query.order_by(Posts.date_posted)
+#     return render_template("posts.html", posts=posts)
+
 @app.route('/posts')
-def posts():
-    posts = Posts.query.order_by(Posts.date_posted)
-    return render_template("posts.html", posts=posts)
+@app.route('/posts/page/<int:page>')
+def posts(page=1):
+    posts = Posts.query.order_by(Posts.date_posted).paginate(page=page, per_page=5)
+    return render_template("posts.html", posts=posts, page=page)
 
 
 @app.route('/posts/<int:id>')
@@ -184,7 +172,7 @@ def edit_post(id):
         post.content = form.content.data
         db.session.add(post)
         db.session.commit()
-        flash("Post Has Been Updated!")
+        flash("Post Has Been Updated!", category="success")
         return redirect(url_for('post', id=post.id))
 
     if current_user.id == post.poster_id or current_user.id == 1:
@@ -192,7 +180,7 @@ def edit_post(id):
         form.content.data = post.content
         return render_template('edit_post.html', form=form)
     else:
-        flash("You Aren't Authorized To Edit that Post")
+        flash("You Aren't Authorized To Edit that Post", category="danger")
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 
@@ -207,16 +195,16 @@ def delete_post(id):
         try:
             db.session.delete(post_to_delete)
             db.session.commit()
-            flash('Blog Post Was Deleted!')
+            flash('Blog Post Was Deleted!', category="success")
             posts = Posts.query.order_by(Posts.date_posted)
             return render_template("posts.html", posts=posts)
 
         except:
-            flash("Whoops! There was a problem, please try again!")
+            flash("Whoops! There was a problem, please try again!", category="warning")
             posts = Posts.query.order_by(Posts.date_posted)
             return render_template("posts.html", posts=posts)
     else:
-        flash('You Aren\'t Authorized To Delete That Post!')
+        flash('You Aren\'t Authorized To Delete That Post!', category="danger")
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 
@@ -229,12 +217,12 @@ def login():
         if user:
             if check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
-                flash('Login Successfully!')
+                flash('Login Successfully!', category="success")
                 return redirect(url_for('dashboard'))
             else:
-                flash('Wrong Password - Try Again!')
+                flash('Wrong Password - Try Again!', category="danger")
         else:
-            flash('The User Doesn\'t Exist! - Try Again...')
+            flash('The User Doesn\'t Exist! - Try Again...', category="danger")
     return render_template('login.html', form=form)
 
 
@@ -242,7 +230,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You Have Been Logged Out! Thanks For Using Our Service~ ')
+    flash('You Have Been Logged Out! Thanks For Using Our Service~ ', category="success")
     return redirect(url_for('login'))
 
 
@@ -284,5 +272,5 @@ def admin():
     if id == 1:
         return render_template("admin.html")
     else:
-        flash("Sorry, you have to be Admin to access this page")
+        flash("Sorry, you have to be Admin to access this page", category="danger")
         return redirect(url_for('dashboard'))

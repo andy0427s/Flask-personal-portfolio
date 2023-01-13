@@ -11,10 +11,92 @@
     <!-- Own CSS   -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-    <title>Hello, world!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;700&display=swap" rel="stylesheet">
+
+
+    <title>Tsang An Lee's portfolio</title>
+
+    <!-- page switch macro    -->
+    {% macro render_pagination(pagination, endpoint) %}
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+
+        {% if pagination.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('posts', page=pagination.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for('posts', page=pagination.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for page in pagination.iter_pages() %}
+          {% if page %}
+            {% if page != pagination.page %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for(endpoint, page=page) }}">
+                  {{ page }}
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item active"><a class="page-link" href="">{{ page }}</a></li>
+            {% endif %}
+          {% else %}
+            <li class="page-item"><a class="page-link">...</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if pagination.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('posts', page=pagination.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" href="{{ url_for('posts', page=pagination.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endmacro %}
   </head>
   <body>
+
     {% include 'navbar.html' %}
+    <!-- Pop up messages for success or error   -->
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if message=="Please log in to access this page." %}
+                <div class="alert alert-warning alert-dismissible show" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            {% else %}
+                <div class="alert alert-{{category}} alert-dismissible show" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
     <div class="container">
       <br>
         {% block content %}

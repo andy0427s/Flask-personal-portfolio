@@ -1,15 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-    <div class="alert alert-success alert-dismissible show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-{% endfor %}
-
 
     <h1>Login!</h1>
     <br/><br/>
@@ -20,11 +11,30 @@
             {{ form.hidden_tag() }}
 
             {{ form.username.label(class="form-label") }}
-            {{ form.username(class="form-control") }}
-            <br/>
+            {% if form.username.errors %}
+                {{ form.username(class="form-control is-invalid") }}
+                {% for error in form.username.errors %}
+                    <small><span style="color: red">{{ error }}</span></small>
+                {% endfor %}
+            {% else %}
+                {{ form.username(class="form-control") }}
+                <small><span style="color: darkgray">Between 8 and 30 characters long, and only contain alphanumeric letters</span></small>
+            {% endif %}
+            <br/><br/>
 
             {{ form.password.label(class="form-label") }}
-            {{ form.password(class="form-control") }}
+            {% if form.password.errors %}
+                {{ form.password(class="form-control is-invalid") }}
+                {% for error in form.password.errors %}
+                    <small><span style="color: red">{{ error }}</span></small>
+                {% endfor %}
+            {% else %}
+                {{ form.password(class="form-control") }}
+                <small><span style="color: darkgray">Between 8 and 10 characters long, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character</span></small>
+            {% endif %}
+            <br/><br/>
+
+<!--            {{ form.recaptcha }}-->
             <br/>
 
             {{ form.submit(class="btn btn-primary") }}
