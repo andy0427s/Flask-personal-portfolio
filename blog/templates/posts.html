@@ -6,24 +6,33 @@
 
 {% for post in posts %}
 
-    <div class="shadow p-3 mb-5 bg-body rounded">
-        <h2><a href="{{ url_for('post', id=post.id) }}">{{ post.title }}</a></h2>
-        <small>By: {{ post.poster.name }}<br>
-            {{ post.date_posted }}</small><br><br>
-        {{ post.content|safe| truncate(100) }}<br><br>
-        <a href="{{ url_for('post', id=post.id) }}",
-           class="btn btn-outline-secondary btn-sm">View Post</a>
+    <div class="shadow p-3 mb-5 bg-body rounded posts-container">
+        <div class="posts-text-container">
+            <h2><a href="{{ url_for('post', id=post.id) }}">{{ post.title }}</a></h2>
+            <small>By: {{ post.poster.name }}<br>
+                {{ post.date_posted }}</small><br><br>
+            {{ post.content|safe| truncate(100) }}<br><br>
+            <a href="{{ url_for('post', id=post.id) }}",
+               class="btn btn-outline-secondary btn-sm">View Post</a>
 
-        {% if post.poster_id == current_user.id or current_user.id == 1  %}
-        <a href="{{ url_for('edit_post', id=post.id) }}",
-           class="btn btn-outline-secondary btn-sm">Edit Post</a>
+            {% if post.poster_id == current_user.id or current_user.id == 1  %}
+            <a href="{{ url_for('edit_post', id=post.id) }}",
+               class="btn btn-outline-secondary btn-sm">Edit Post</a>
 
-        <a href="{{ url_for('delete_post', id=post.id) }}",
-           class="btn btn-outline-danger btn-sm">Delete Post</a>
-        {% endif %}
-        <br><br>
+            <a href="{{ url_for('delete_post', id=post.id) }}",
+               class="btn btn-outline-danger btn-sm">Delete Post</a>
+            {% endif %}
+        </div>
+        <div class="posts-img-container">
+            {% if post.post_pic %}
+                <img src="{{ url_for('static', filename='img/' +  post.post_pic) }}">
+            {% endif %}
+
+<!--            <img src="../static/img/nasa.jpg" class="post-img">-->
+        </div>
+
     </div>
-    <br>
+
 {% endfor %}
 
 {{ render_pagination(posts, 'posts') }}

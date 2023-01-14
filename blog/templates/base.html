@@ -71,10 +71,12 @@
   {% endmacro %}
   </head>
   <body>
-    {% include 'menu.html' %}
-    {% include 'navbar.html' %}
-    <!-- Pop up messages for success or error   -->
 
+    {% include 'navbar.html' %}
+
+
+    <div class="container">
+      <!-- Flash message window  -->
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
@@ -96,8 +98,6 @@
           {% endfor %}
         {% endif %}
       {% endwith %}
-
-    <div class="container">
       <br>
         {% block content %}
         {% endblock %}

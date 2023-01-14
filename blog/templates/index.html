@@ -9,10 +9,14 @@
     <!-- Own CSS   -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    {% include 'menu.html' %}
 
+    {% include 'navbar.html' %}
 
     <div id="vanta-canvas" class="flex">
       <div class="text">
@@ -26,17 +30,50 @@
             View my work <i class="mdi mdi-arrow-right"></i>
       </div>
     </div>
-    {% include 'navbar.html' %}
-    <h1>I'm learning Computer Science!</h1>
-    <p>
-        Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
-        This is my personal portfolio
-    </p>
-    <p>
-        Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
-        This is my personal portfolio
-    </p>
-    <img src="../static/img/profile.jpg">
+
+    <div class="container">
+        <div class="row main-container">
+            <div class="col">
+                <h1>About</h1>
+                <p>
+                    Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
+                    This is my personal portfolio
+                </p>
+            </div>
+        </div>
+        <div class="row main-container">
+            <div class="col">
+                <h1>Skills</h1>
+                <p>
+                    Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
+                    This is my personal portfolio
+                </p>
+                <section class="skills-icons">
+                    <img src="../static/img/html-5.png" class="skill-icon" alt="HTML icon" width="64">
+                    <img src="../static/img/css-3.png" class="skill-icon" alt="CSS icon" width="64">
+                    <img src="../static/img/js.png" class="skill-icon" alt="Javascript icon" width="64">
+                    <img src="../static/img/java.png" class="skill-icon" alt="Java icon" width="64">
+                    <img src="../static/img/python.png" class="skill-icon" alt="Python icon" width="64">
+                    <img src="../static/img/spring.png" class="skill-icon" alt="Spring icon" width="64">
+                    <img src="../static/img/flask.png" class="skill-icon" alt="Flask icon" width="64">
+                    <img src="../static/img/mysql.png" class="skill-icon" alt="MySQL icon" width="64">
+                    <img src="../static/img/git.png" class="skill-icon" alt="Git icon" width="64">
+                    <img src="../static/img/linux.png" class="skill-icon" alt="Linux icon" width="64">
+                </section>
+            </div>
+        </div>
+        <div class="row main-container">
+            <div class="col">
+                <h1>Projects</h1>
+                <p>
+                    Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
+                    This is my personal portfolio
+                </p>
+            </div>
+        </div>
+    <div>
+
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

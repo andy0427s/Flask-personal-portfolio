@@ -35,12 +35,13 @@
                         </p>
                         <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Logout</a>
                         <a href="{{ url_for('update', id=current_user.id) }}" class="btn btn-secondary btn-sm">Update Profile</a>
+                        <a href="{{ url_for('change_password') }}" class="btn btn-primary btn-sm">Change Password</a>
                         <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger btn-sm">Delete</a>
 
                     </div>
-                    <div class="col-4">
+                    <div class="col-4 profile-img-container">
                         {% if current_user.profile_pic %}
-                        <img src="{{ url_for('static', filename='img/' + current_user.profile_pic )}}" width="200" class="float-right">
+                        <img src="{{ url_for('static', filename='img/' + current_user.profile_pic )}}" class="float-right">
                         {% else %}
                         <img src="{{ url_for('static', filename='img/user.png')}}" width="200">
                         {% endif %}

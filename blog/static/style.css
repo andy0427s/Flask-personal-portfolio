@@ -5,7 +5,13 @@ h1 {
 
 body {
     background: #f4f4f4;
+    /*background: #343A40;*/
+    /*color: white;*/
     font-family: 'Catamaran', sans-serif;
+}
+
+.main-container {
+    text-align: center;
 }
 
 .logo {
@@ -62,4 +68,60 @@ body {
     font-size: 13pt;
     padding: 10px 20px;
     transition: all 0.5s;
+}
+
+.posts-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.posts-container h2{
+    color:darkblue;
+    text-decoration: none;
+}
+
+.posts-container h2 a{
+    /*text-decoration: none;*/
+    color: darkblue;
+}
+
+.posts-container .posts-img-container {
+    width: 40%;
+}
+
+.posts-container .posts-img-container img{
+    width: 100%;
+}
+
+.post-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.post-img-container img{
+    width: 100%;
+    margin-bottom: 1rem
+}
+
+.article-content-container {
+    display: flex;
+
+}
+
+.article-content {
+    width: 80%;
+}
+
+.profile-img-container {
+    aspect-ratio: 4 / 3;
+    display: flex;
+}
+
+.profile-img-container img {
+    width: 100%;
+    object-fit: cover
+    /*height: 100%;*/
 }

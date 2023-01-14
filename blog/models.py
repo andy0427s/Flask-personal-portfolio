@@ -40,6 +40,7 @@ class Posts(db.Model):
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comments', backref='post', lazy='dynamic')
+    post_pic = db.Column(db.String(255), nullable=True)
 
 
 class Comments(db.Model):

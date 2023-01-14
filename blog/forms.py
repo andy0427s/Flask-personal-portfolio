@@ -44,7 +44,7 @@ class UserForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     content = CKEditorField("Content", validators=[DataRequired()])
-    author = StringField("Author")
+    post_pic = FileField("Post Pic")
     # recaptcha = RecaptchaField()
     submit = SubmitField("Submit")
 
@@ -66,3 +66,23 @@ class CommentForm(FlaskForm):
     body = CKEditorField('Content', validators=[DataRequired()])
     # recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
+
+
+class FormChangePWD(FlaskForm):
+    password_old = PasswordField('Old PassWord', validators=[DataRequired()])
+    password_new = PasswordField('New PassWord', validators=[DataRequired(), EqualTo('password_new_confirm',
+                                                                                 message='PASSWORD NEED MATCH'),
+                                                         Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)("
+                                                                "?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,"
+                                                                "10}$", message="Your password "
+                                                                                "should contain "
+                                                                                "minimum eight "
+                                                                                "characters, "
+                                                                                "at least 1 "
+                                                                                "uppercase letter, "
+                                                                                "1 lowercase "
+                                                                                "letter, 1 number "
+                                                                                "and 1 special "
+                                                                                "character:")])
+    password_new_confirm = PasswordField('Confirm PassWord', validators=[DataRequired()])
+    submit = SubmitField('Change Password')

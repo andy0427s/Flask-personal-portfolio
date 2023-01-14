@@ -7,7 +7,7 @@
 <h1>Add Blog Post...</h1>
     <div class="shadow p-3 mb-5 bg-body rounded">
 
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
 
             {{ form.title.label(class="form-label") }}
@@ -17,6 +17,11 @@
             {{ form.content.label(class="form-label") }}
             {{ form.content(class="form-control", rows='10') }}
             <br/>
+
+            {{ form.post_pic.label(class="form-label") }}
+            {{ form.post_pic(class="form-control") }}
+            <br/>
+
 <!--            {{ form.recaptcha }}-->
             {{ form.submit(class="btn btn-primary") }}
         </form>

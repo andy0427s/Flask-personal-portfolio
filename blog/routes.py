@@ -4,12 +4,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
-from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm
+from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD
 from blog.models import Users, Posts, Comments
 
 import os
 import uuid as uuid
-
+from PIL import Image
 
 @app.route('/')
 @app.route('/home')
@@ -64,13 +64,19 @@ def update(id):
         name_to_update.about_author = request.form['about_author']
 
         if request.files['profile_pic']:
+            output_size = (512, 512)
             name_to_update.profile_pic = request.files['profile_pic']
             # Generate a unique/secure filename
             pic_filename = secure_filename(name_to_update.profile_pic.filename)
             pic_name = str(uuid.uuid1()) + "_" + pic_filename
+            with Image.open(name_to_update.profile_pic.stream) as i:
+                i.thumbnail(output_size)
+                i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+
             # Save the profile img to the static directory
             # basedir = os.path.abspath(os.path.dirname(__file__))
-            name_to_update.profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+
+            # i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
             # Save secured filename in db
             name_to_update.profile_pic = pic_name
             try:
@@ -133,13 +139,28 @@ def add_post():
     form = PostForm()
     if form.validate_on_submit():
         poster = current_user.id
-        post = Posts(title=form.title.data, content=form.content.data, poster_id=poster)
+        post_pic = form.post_pic.data
+
+        if request.files['post_pic']:
+            post_pic_filename = secure_filename(post_pic.filename)
+            post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
+            post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_name))
+            post = Posts(title=form.title.data,
+                         content=form.content.data,
+                         poster_id=poster,
+                         post_pic=post_pic_name)
+        else:
+            post = Posts(title=form.title.data,
+                         content=form.content.data,
+                         poster_id=poster)
         form.title.data = ''
         form.content.data = ''
-        form.author.data = ''
+        form.post_pic.data = ''
         db.session.add(post)
         db.session.commit()
         flash("Blog Post Submitted Successfully!", category="success")
+        posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=1, per_page=5)
+        return render_template("posts.html", posts=posts, page=1)
 
     return render_template("add_post.html", form=form)
 
@@ -181,6 +202,14 @@ def edit_post(id):
     if form.validate_on_submit():
         post.title = form.title.data
         post.content = form.content.data
+        post_pic = form.post_pic.data
+
+        if request.files['post_pic']:
+            post_pic_filename = secure_filename(post_pic.filename)
+            post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
+            post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_name))
+            post.post_pic = post_pic_name
+
         db.session.add(post)
         db.session.commit()
         flash("Post Has Been Updated!", category="success")
@@ -207,17 +236,17 @@ def delete_post(id):
             db.session.delete(post_to_delete)
             db.session.commit()
             flash('Blog Post Was Deleted!', category="success")
-            posts = Posts.query.order_by(Posts.date_posted)
-            return render_template("posts.html", posts=posts)
+            posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=1, per_page=5)
+            return render_template("posts.html", posts=posts, page=1)
 
         except:
             flash("Whoops! There was a problem, please try again!", category="warning")
-            posts = Posts.query.order_by(Posts.date_posted)
-            return render_template("posts.html", posts=posts)
+            posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=1, per_page=5)
+            return render_template("posts.html", posts=posts, page=1)
     else:
         flash("You Aren't Authorized To Delete That Post!", category="danger")
-        posts = Posts.query.order_by(Posts.date_posted)
-        return render_template("posts.html", posts=posts)
+        posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=1, per_page=5)
+        return render_template("posts.html", posts=posts, page=1)
 
 
 @app.route('/comments/edit/<int:id>', methods=['GET', 'POST'])
@@ -232,7 +261,7 @@ def edit_comment(id):
         flash("Comment Has Been Updated", category="success")
         return redirect(url_for('post', id=comment.post_id))
 
-    if current_user.id == comment.author_id or current_user == 1:
+    if current_user.id == comment.author_id or current_user.id == 1:
         form.body.data = comment.body
         return render_template('edit_comment.html', form=form, id=comment.post_id)
 
@@ -328,3 +357,18 @@ def admin():
     else:
         flash("Sorry, you have to be Admin to access this page", category="danger")
         return redirect(url_for('dashboard'))
+
+
+@app.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = FormChangePWD()
+    if form.validate_on_submit():
+        if check_password_hash(current_user.password_hash, form.password_old.data):
+            hashed_pw = generate_password_hash(form.password_new.data, "sha256")
+            current_user.password_hash = hashed_pw
+            db.session.add(current_user)
+            db.session.commit()
+            flash('You Have Already Change Your Password, Please Login Again.', category="success")
+            return redirect(url_for('login'))
+    return render_template('change_password.html', form=form)
