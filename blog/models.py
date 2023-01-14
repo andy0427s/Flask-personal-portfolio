@@ -16,6 +16,7 @@ class Users(db.Model, UserMixin):
     profile_pic = db.Column(db.String(255), nullable=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Posts', backref='poster')
+    comments = db.relationship('Comments', backref='author', lazy='dynamic')
 
     @property
     def password(self):
@@ -38,3 +39,13 @@ class Posts(db.Model):
     content = db.Column(db.Text)
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comments = db.relationship('Comments', backref='post', lazy='dynamic')
+
+
+class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))

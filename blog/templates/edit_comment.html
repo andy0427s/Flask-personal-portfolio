@@ -3,18 +3,14 @@
 
 
 <br/>
-    <h2>Edit Post...</h2>
+    <h2>Edit Comment...</h2>
     <br>
     <div class="shadow p-3 mb-5 bg-body rounded">
         <form method="POST">
             {{ form.hidden_tag() }}
 
-            {{ form.title.label(class="form-label") }}
-            {{ form.title(class="form-control") }}
-            <br/>
-
-            {{ form.content.label(class="form-label") }}
-            {{ form.content(class="form-control", rows='10') }}
+            {{ form.body.label(class="form-label") }}
+            {{ form.body(class="form-control") }}
             <br/>
 <!--            {{ form.recaptcha }}-->
             {{ form.submit(class="btn btn-primary") }}

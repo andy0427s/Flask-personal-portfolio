@@ -33,9 +33,9 @@ class UserForm(FlaskForm):
                                                                                                  "and 1 special "
                                                                                                  "character:")])
     password_hash2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password_hash',
-                                                                  message='Passwords '
-                                                                          'Must '
-                                                                          'Match!')])
+                                                                                           message='Passwords '
+                                                                                                   'Must '
+                                                                                                   'Match!')])
     profile_pic = FileField("Profile Pic")
     # recaptcha = RecaptchaField()
     submit = SubmitField("Submit")
@@ -59,4 +59,10 @@ class LoginForm(FlaskForm):
 class SearchForm(FlaskForm):
     # name == pass data from name in the form/html by WETForm
     searched = StringField('Searched', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class CommentForm(FlaskForm):
+    body = CKEditorField('Content', validators=[DataRequired()])
+    # recaptcha = RecaptchaField()
     submit = SubmitField('Submit')

@@ -4,8 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
-from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm
-from blog.models import Users, Posts
+from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm
+from blog.models import Users, Posts, Comments
 
 import os
 import uuid as uuid
@@ -152,14 +152,25 @@ def add_post():
 @app.route('/posts')
 @app.route('/posts/page/<int:page>')
 def posts(page=1):
-    posts = Posts.query.order_by(Posts.date_posted).paginate(page=page, per_page=5)
+    posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=page, per_page=5)
     return render_template("posts.html", posts=posts, page=page)
 
 
-@app.route('/posts/<int:id>')
+@app.route('/posts/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Posts.query.get_or_404(id)
-    return render_template('post.html', post=post)
+    form = CommentForm()
+    comments = post.comments.order_by(Comments.date_posted)
+    if form.validate_on_submit():
+        comment = Comments(body=form.body.data,
+                           post=post,
+                           author=current_user._get_current_object())
+        form.body.data = ''
+        db.session.add(comment)
+        db.session.commit()
+        flash("Your comment has been published.", category="success")
+
+    return render_template('post.html', post=post, form=form, comments=comments)
 
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
@@ -178,7 +189,7 @@ def edit_post(id):
     if current_user.id == post.poster_id or current_user.id == 1:
         form.title.data = post.title
         form.content.data = post.content
-        return render_template('edit_post.html', form=form)
+        return render_template('edit_post.html', form=form, id=post.id)
     else:
         flash("You Aren't Authorized To Edit that Post", category="danger")
         posts = Posts.query.order_by(Posts.date_posted)
@@ -204,9 +215,52 @@ def delete_post(id):
             posts = Posts.query.order_by(Posts.date_posted)
             return render_template("posts.html", posts=posts)
     else:
-        flash('You Aren\'t Authorized To Delete That Post!', category="danger")
+        flash("You Aren't Authorized To Delete That Post!", category="danger")
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
+
+
+@app.route('/comments/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_comment(id):
+    comment = Comments.query.get_or_404(id)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment.body = form.body.data
+        db.session.add(comment)
+        db.session.commit()
+        flash("Comment Has Been Updated", category="success")
+        return redirect(url_for('post', id=comment.post_id))
+
+    if current_user.id == comment.author_id or current_user == 1:
+        form.body.data = comment.body
+        return render_template('edit_comment.html', form=form, id=comment.post_id)
+
+    else:
+        flash("You Aren't Authorized To Edit that comment", category="danger")
+        return redirect(url_for('post', id=comment.post_id))
+
+
+@app.route('/comments/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_comment(id):
+    comment_to_delete = Comments.query.get_or_404(id)
+    id = current_user.id
+    post_id = comment_to_delete.post_id
+    if id == comment_to_delete.author_id or id == 1:
+
+        try:
+            db.session.delete(comment_to_delete)
+            db.session.commit()
+            flash('Comment Was Deleted!', category="success")
+            return redirect(url_for('post', id=post_id))
+
+        except:
+            flash("Whoops! There was a problem, please try again!", category="warning")
+            return redirect(url_for('post', id=post_id))
+    else:
+        flash("You Aren't Authorized To Delete That Post!", category="danger")
+        return redirect(url_for('post', id=post_id))
 
 
 @app.route('/login', methods=['GET', 'POST'])
