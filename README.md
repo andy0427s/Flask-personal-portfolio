@@ -8,7 +8,7 @@ My username: c22011528
 
 ## URL of my website on the OpenShift
 
-http://c-22011528-flask-labs-git-flask-lab-c22011528.apps.openshift.cs.cf.ac.uk/
+http://blog-c22011258.apps.openshift.cs.cf.ac.uk/
 
 
 ## Reference
