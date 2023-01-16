@@ -1,5 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
+import jwt
+from flask import current_app
 from flask_login import UserMixin
 
 from blog import db
@@ -17,6 +19,7 @@ class Users(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Posts', backref='poster')
     comments = db.relationship('Comments', backref='author', lazy='dynamic')
+    confirm = db.Column(db.Boolean, default=False)
 
     @property
     def password(self):
@@ -28,6 +31,32 @@ class Users(db.Model, UserMixin):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    # Token Generation
+    def create_token(self, expiration=600):
+        reset_token = jwt.encode(
+            {
+                'confirm': self.id,
+                'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=expiration)
+            },
+            current_app.config['SECRET_KEY'],
+            algorithm="HS256"
+        )
+        return reset_token
+
+    def confirm_token(self, token):
+        try:
+            data = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                leeway=timedelta(seconds=10),
+                algorithms=["HS256"]
+            )
+        except:
+            return False
+
+        user_id = data.get('confirm')
+        return user_id
 
     def __repr__(self):
         return '<Name %r>' % self.name

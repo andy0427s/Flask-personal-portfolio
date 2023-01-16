@@ -12,7 +12,8 @@
                 <a href="{{ url_for('edit_post', id=post.id) }}",
                    class="btn btn-outline-secondary btn-sm">Edit Post</a>
                 <a href="{{ url_for('delete_post', id=post.id) }}",
-                   class="btn btn-outline-danger btn-sm">Delete Post</a>
+                   class="btn btn-outline-danger btn-sm",
+                   data-toggle="modal" data-target="#postModal">Delete Post</a>
             {% endif %}
                 <a href="{{ url_for('posts') }}",
                     class="btn btn-outline-secondary btn-sm">Back To Blog</a>
@@ -61,10 +62,30 @@
                 </div>
             </div>
         </div>
-        <br><br>
-        <div style="text-align: right">
+
+        <ul class="pager pager-container">
+          <li class="previous float-left">
+              <button type="button" class="btn btn-secondary">
+                  <a href="{{ url_for('switch_prev_page', id=id) }}">&larr; Older Post</a>
+              </button>
+          </li>
+          <li class="next float-right">
+              <button type="button" class="btn btn-secondary">
+                  <a href="{{ url_for('switch_next_page', id=id) }}">Newer Post &rarr;</a>
+              </button>
+          </li>
+        </ul>
+
+
+        <br><br><br><br>
+
+        {% if comments.count() == 0 %}
+            <br/><br/>
+        {% else %}
+        <div style="text-align: left">
             <h4>{{comments.count()}} Comments</h4>
         </div>
+        {% endif %}
 
         <!-- Comment Section  -->
         {% for comment in comments %}
@@ -83,35 +104,83 @@
                         <a href="{{ url_for('edit_comment', id=comment.id) }}",
                         class="btn btn-outline-secondary btn-sm">Edit Comment</a>
                         <a href="{{ url_for('delete_comment', id=comment.id) }}",
-                        class="btn btn-outline-danger btn-sm">Delete Comment</a>
+                        class="btn btn-outline-danger btn-sm",
+                        data-toggle="modal" data-target="#commentModal">Delete Comment</a>
                     {% endif %}
                 </div>
-                </br>
+                <br/>
             {% endif %}
-        {% endfor %}
-    </div>
+        <!-- Comment Modal       -->
+        <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="example1ModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure to delete this comment?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <a href="{{ url_for('delete_comment', id=comment.id) }}",
+                   class="btn btn-outline-danger">Save Change</a>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    {% if current_user.is_authenticated %}
-        <h3>Leave a Comment</h3>
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            <br/>
-            {{ form.body.label(class="form-label") }}
-            {{ form.body(class="form-control") }}
-            <br/>
-            {{ form.submit(class="btn btn-primary") }}
-            <br/><br/>
-        </form>
-        {{ ckeditor.load() }}
-        {{ ckeditor.config(name='content', language='en') }}
+        {% endfor %}
+        <div class="divider"></div>
+        {% if current_user.is_authenticated %}
+
+            <hr>
+
+            <h3>Leave a Comment</h3>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <br/>
+                {{ form.body.label(class="form-label") }}
+                {{ form.body(class="form-control") }}
+                <br/>
+                {{ form.submit(class="btn btn-primary") }}
+                <br/><br/>
+            </form>
+            {{ ckeditor.load() }}
+            {{ ckeditor.config(name='content', language='en') }}
 <!--            {{ form.recaptcha }}-->
 <!--            <br/>-->
-    {% else %}
-        <a class="nav-link" href="{{ url_for('login') }}"><h3>Please log in to leave a comment</h3></a>
-        <br/><br/>
-    {% endif %}
+        {% else %}
+            <a class="nav-link" href="{{ url_for('login') }}"><h3>Please log in to leave a comment</h3></a>
+            <br/><br/>
+        {% endif %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="example1ModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure to delete this post?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <a href="{{ url_for('delete_post', id=id) }}",
+                   class="btn btn-outline-danger">Save Change</a>
+              </div>
+            </div>
+          </div>
+        </div>
 
 
+    </div>
 
 
 

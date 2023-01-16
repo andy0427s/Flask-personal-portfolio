@@ -11,6 +11,9 @@ import os
 import uuid as uuid
 from PIL import Image
 
+from blog.sendmail import send_mail
+
+
 @app.route('/')
 @app.route('/home')
 def index():
@@ -27,6 +30,31 @@ def page_not_found(e):
     return render_template("404.html"), 500
 
 
+# @app.route('/user/add', methods=['GET', 'POST'])
+# def register():
+#     name = None
+#     form = UserForm()
+#     if form.validate_on_submit():
+#         user = Users.query.filter_by(email=form.email.data).first()
+#         if user is None:
+#             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
+#             user = Users(name=form.name.data, username=form.username.data, email=form.email.data,
+#                          password_hash=hashed_pw)
+#             db.session.add(user)
+#             db.session.commit()
+#         name = form.name.data
+#         form.name.data = ''
+#         form.username.data = ''
+#         form.email.data = ''
+#         form.password_hash.data = ''
+#         flash("User Registered Successfully!", category="success")
+#     our_users = Users.query.order_by(Users.date_added)
+#     return render_template("register.html",
+#                            name=name,
+#                            form=form,
+#                            our_users=our_users)
+
+
 @app.route('/user/add', methods=['GET', 'POST'])
 def register():
     name = None
@@ -39,18 +67,46 @@ def register():
                          password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
+
+            # Token generation
+            token = user.create_token()
+
+            # Email sending
+            user_email = form.email.data
+            send_mail(sender='andy0427s@gmail.com',
+                      recipients=[user_email],
+                      subject='Activate your account',
+                      template='welcome',
+                      mailtype='html',
+                      user=user,
+                      token=token)
+
         name = form.name.data
         form.name.data = ''
         form.username.data = ''
         form.email.data = ''
         form.password_hash.data = ''
-        flash("User Registered Successfully!", category="success")
-    our_users = Users.query.order_by(Users.date_added)
+        flash("Check Your Email and Activate Your Account!", category="success")
+
     return render_template("register.html",
                            name=name,
-                           form=form,
-                           our_users=our_users)
+                           form=form)
 
+
+@app.route('/user_confirm/<token>')
+def user_confirm(token):
+    user = Users()
+    user_id = user.confirm_token(token)
+    if user_id:
+        user = Users.query.filter_by(id=user_id).first()
+        user.confirm = True
+        db.session.add(user)
+        db.session.commit()
+        flash('Thank for your activation, you can log in now!', category='success')
+        return redirect(url_for('login'))
+    else:
+        flash('Wrong Token, please send the registration mail again!', category='danger')
+        return redirect(url_for('register'))
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -117,17 +173,15 @@ def delete(id):
             db.session.delete(user_to_delete)
             db.session.commit()
             flash("User Deleted Successfully!", category="success")
-            our_users = Users.query.order_by(Users.date_added)
+
             return render_template("register.html",
                                    name=name,
-                                   form=form,
-                                   our_users=our_users)
+                                   form=form)
         except:
             flash("Whoops! There was a problem deleting user, try again!", category="warning")
             return render_template("register.html",
                                    name=name,
-                                   form=form,
-                                   our_users=our_users)
+                                   form=form)
     else:
         flash("Sorry, you can't delete that user!", category="danger")
         return redirect(url_for('dashboard'))
@@ -191,7 +245,7 @@ def post(id):
         db.session.commit()
         flash("Your comment has been published.", category="success")
 
-    return render_template('post.html', post=post, form=form, comments=comments)
+    return render_template('post.html', post=post, form=form, comments=comments, id=id)
 
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
@@ -298,14 +352,18 @@ def login():
     if form.validate_on_submit():
         user = Users.query.filter_by(username=form.username.data).first()
         if user:
-            if check_password_hash(user.password_hash, form.password.data):
-                login_user(user)
-                flash('Login Successfully!', category="success")
-                return redirect(url_for('dashboard'))
+            if user.confirm:
+                if check_password_hash(user.password_hash, form.password.data):
+                    login_user(user)
+                    flash('Login Successfully!', category="success")
+                    return redirect(url_for('dashboard'))
+                else:
+                    flash('Wrong Password - Try Again!', category="danger")
             else:
-                flash('Wrong Password - Try Again!', category="danger")
+                flash('Sorry, your account does not be activated, please activate your account first!', category="warning")
+                return redirect(url_for('register'))
         else:
-            flash('The User Doesn\'t Exist! - Try Again...', category="danger")
+            flash("The User Doesn't Exist! - Try Again...", category="danger")
     return render_template('login.html', form=form)
 
 
@@ -372,3 +430,23 @@ def change_password():
             flash('You Have Already Change Your Password, Please Login Again.', category="success")
             return redirect(url_for('login'))
     return render_template('change_password.html', form=form)
+
+
+@app.route('/previous-page/<int:id>', methods=['GET', 'POST'])
+def switch_prev_page(id):
+    pre_post = Posts.query.filter(Posts.id < id).order_by(Posts.id.desc()).first()
+    if pre_post:
+        return redirect(url_for('post', id=pre_post.id))
+    else:
+        return redirect(url_for('post', id=id))
+
+
+@app.route('/next-page/<int:id>', methods=['GET', 'POST'])
+def switch_next_page(id):
+    next_post = Posts.query.filter(Posts.id > id).order_by(Posts.id.asc()).first()
+    if next_post:
+        return redirect(url_for('post', id=next_post.id))
+    else:
+        return redirect(url_for('post', id=id))
+
+

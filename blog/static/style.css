@@ -125,3 +125,16 @@ body {
     object-fit: cover
     /*height: 100%;*/
 }
+.pager-container {
+    padding: 0;
+    margin: 40px 0;
+    text-decoration: none;
+    list-style-type:none;
+}
+
+.pager-container a {
+    color: white;
+}
+
+
+

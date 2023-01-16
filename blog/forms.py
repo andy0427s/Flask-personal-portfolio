@@ -20,18 +20,7 @@ class UserForm(FlaskForm):
                                                                                   'letters.')])
     email = StringField("Email", validators=[DataRequired(), Email()])
     about_author = TextAreaField("About Author")
-    password_hash = PasswordField("Password", validators=[DataRequired(), Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)("
-                                                                                 "?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,"
-                                                                                 "10}$", message="Your password "
-                                                                                                 "should contain "
-                                                                                                 "minimum eight "
-                                                                                                 "characters, "
-                                                                                                 "at least 1 "
-                                                                                                 "uppercase letter, "
-                                                                                                 "1 lowercase "
-                                                                                                 "letter, 1 number "
-                                                                                                 "and 1 special "
-                                                                                                 "character:")])
+    password_hash = PasswordField("Password", validators=[DataRequired()])
     password_hash2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password_hash',
                                                                                            message='Passwords '
                                                                                                    'Must '
