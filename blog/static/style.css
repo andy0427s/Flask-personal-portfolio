@@ -5,7 +5,8 @@ h1 {
 
 body {
     background: #f4f4f4;
-    /*background: #343A40;*/
+    /*background: #3fbbff;*/
+    /*background: #23153c;*/
     /*color: white;*/
     font-family: 'Catamaran', sans-serif;
 }
@@ -82,6 +83,7 @@ body {
 
 .posts-container h2 a{
     /*text-decoration: none;*/
+    /*color: white;*/
     color: darkblue;
 }
 
@@ -136,5 +138,16 @@ body {
     color: white;
 }
 
+/*.main-content .posts-container {*/
+/*    background: #343A40;*/
+/*}*/
+
+/*.main-content .posts-text-container {*/
+/*    color: white;*/
+/*}*/
+
+/*.main-content .post-container {*/
+/*    background: #343A40;*/
+/*}*/
 
 
