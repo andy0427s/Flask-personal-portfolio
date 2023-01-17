@@ -4,7 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
-from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD, EmailForm
+from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD, EmailForm, \
+    ResetPWForm, FormResetPWD
 from blog.models import Users, Posts, Comments
 
 import os
@@ -401,6 +402,71 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/login/reset/password/', methods=['GET', 'POST'])
+def resend_reset():
+    if not current_user.is_anonymous:
+        return redirect(url_for('index'))
+
+    form = ResetPWForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user:
+            token = user.create_token()
+            user_email = form.email.data
+            send_mail(sender='andy0427s@gmail.com',
+                      recipients=[user_email],
+                      subject='Reset Your Password',
+                      template='reset_mail',
+                      mailtype='html',
+                      user=user,
+                      token=token)
+            form.email.data = ''
+            flash("Check your email and follow the instruction to reset your password!", category="success")
+        else:
+            form.email.data = ''
+            flash("Not found the valid account, please register your account first!", category="warning")
+        return redirect(url_for("login"))
+    return render_template("reset_password_email.html", form=form)
+
+
+@app.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = FormChangePWD()
+    if form.validate_on_submit():
+        if check_password_hash(current_user.password_hash, form.password_old.data):
+            hashed_pw = generate_password_hash(form.password_new.data, "sha256")
+            current_user.password_hash = hashed_pw
+            db.session.add(current_user)
+            db.session.commit()
+            flash('You Have Already Change Your Password, Please Login Again.', category="success")
+            return redirect(url_for('login'))
+    return render_template('change_password.html', form=form)
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if not current_user.is_anonymous:
+        return redirect(url_for('index'))
+
+    form = FormResetPWD()
+    if form.validate_on_submit():
+        user = Users()
+        user_id = user.confirm_token(token)
+        if user_id:
+            user = Users.query.filter_by(id=user_id).first()
+            if user:
+                hashed_pw = generate_password_hash(form.password_new.data, "sha256")
+                user.password_hash = hashed_pw
+                db.session.commit()
+                flash('Reset Your Password Successfully, please log in again!', category='success')
+                return redirect(url_for('login'))
+            else:
+                flash('Not found the user', category='warning')
+                return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)
+
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
@@ -441,21 +507,6 @@ def admin():
     else:
         flash("Sorry, you have to be Admin to access this page", category="danger")
         return redirect(url_for('dashboard'))
-
-
-@app.route('/change-password', methods=['GET', 'POST'])
-@login_required
-def change_password():
-    form = FormChangePWD()
-    if form.validate_on_submit():
-        if check_password_hash(current_user.password_hash, form.password_old.data):
-            hashed_pw = generate_password_hash(form.password_new.data, "sha256")
-            current_user.password_hash = hashed_pw
-            db.session.add(current_user)
-            db.session.commit()
-            flash('You Have Already Change Your Password, Please Login Again.', category="success")
-            return redirect(url_for('login'))
-    return render_template('change_password.html', form=form)
 
 
 @app.route('/previous-page/<int:id>', methods=['GET', 'POST'])

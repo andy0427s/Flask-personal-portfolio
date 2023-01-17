@@ -42,7 +42,7 @@ class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     # recaptcha = RecaptchaField()
-    submit = SubmitField('Submit')
+    submit = SubmitField('Login')
 
 
 class SearchForm(FlaskForm):
@@ -60,23 +60,47 @@ class CommentForm(FlaskForm):
 class FormChangePWD(FlaskForm):
     password_old = PasswordField('Old PassWord', validators=[DataRequired()])
     password_new = PasswordField('New PassWord', validators=[DataRequired(), EqualTo('password_new_confirm',
-                                                                                 message='PASSWORD NEED MATCH'),
-                                                         Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)("
-                                                                "?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,"
-                                                                "10}$", message="Your password "
-                                                                                "should contain "
-                                                                                "minimum eight "
-                                                                                "characters, "
-                                                                                "at least 1 "
-                                                                                "uppercase letter, "
-                                                                                "1 lowercase "
-                                                                                "letter, 1 number "
-                                                                                "and 1 special "
-                                                                                "character:")])
+                                                                                     message='PASSWORD NEED MATCH'),
+                                                             Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)("
+                                                                    "?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,"
+                                                                    "10}$", message="Your password "
+                                                                                    "should contain "
+                                                                                    "minimum eight "
+                                                                                    "characters, "
+                                                                                    "at least 1 "
+                                                                                    "uppercase letter, "
+                                                                                    "1 lowercase "
+                                                                                    "letter, 1 number "
+                                                                                    "and 1 special "
+                                                                                    "character:")])
     password_new_confirm = PasswordField('Confirm PassWord', validators=[DataRequired()])
     submit = SubmitField('Change Password')
 
 
+class FormResetPWD(FlaskForm):
+    password_new = PasswordField('New PassWord', validators=[DataRequired(), EqualTo('password_new_confirm',
+                                                                                     message='PASSWORD NEED MATCH'),
+                                                             Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)("
+                                                                    "?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,"
+                                                                    "10}$", message="Your password "
+                                                                                    "should contain "
+                                                                                    "minimum eight "
+                                                                                    "characters, "
+                                                                                    "at least 1 "
+                                                                                    "uppercase letter, "
+                                                                                    "1 lowercase "
+                                                                                    "letter, 1 number "
+                                                                                    "and 1 special "
+                                                                                    "character:")])
+    password_new_confirm = PasswordField('Confirm PassWord', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+
+
 class EmailForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email(message="Please enter a valid email!")])
-    submit = SubmitField('Send the email')
+    submit = SubmitField('Send Account Verification Link')
+
+
+class ResetPWForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Email(message="Please enter a valid email!")])
+    submit = SubmitField('Send Password Reset Link')

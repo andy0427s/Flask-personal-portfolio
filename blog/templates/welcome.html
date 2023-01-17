@@ -1,3 +1,4 @@
-<h1>Hello {{ user.username }}, Welcome join us!</h1>
-<h2>Please activate your account, just press the hyperlink within 10 minutes.</h2>
-hyperlink=>{{ url_for('user_confirm', token=token, _external=True) }}
+<h1>Dear {{ user.username }}, Welcome to join us!</h1>
+<h2>Please activate your account by clicking the following link within 10 minutes.</h2>
+Link=>{{ url_for('user_confirm', token=token, _external=True) }}
+<h2>If you do not apply to the request, just ignore this email</h2>
