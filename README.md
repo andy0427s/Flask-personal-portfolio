@@ -8,7 +8,7 @@ My username: c22011528
 
 ## URL of my website on the OpenShift
 
-http://blog-c22011258.apps.openshift.cs.cf.ac.uk/
+http://blog-c22011528.apps.openshift.cs.cf.ac.uk/
 
 
 ## Reference
