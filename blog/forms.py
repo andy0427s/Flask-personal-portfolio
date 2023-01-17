@@ -18,7 +18,7 @@ class UserForm(FlaskForm):
                                                                                   'and 30 characters long, '
                                                                                   'and can only contain alphanumeric '
                                                                                   'letters.')])
-    email = StringField("Email", validators=[DataRequired(), Email()])
+    email = StringField("Email", validators=[DataRequired(), Email(message="Please enter a valid email!")])
     about_author = TextAreaField("About Author")
     password_hash = PasswordField("Password", validators=[DataRequired()])
     password_hash2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password_hash',
@@ -75,3 +75,8 @@ class FormChangePWD(FlaskForm):
                                                                                 "character:")])
     password_new_confirm = PasswordField('Confirm PassWord', validators=[DataRequired()])
     submit = SubmitField('Change Password')
+
+
+class EmailForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Email(message="Please enter a valid email!")])
+    submit = SubmitField('Send the email')

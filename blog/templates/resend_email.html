@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+    <h1>Resend the verification email</h1>
+    <br/><br/>
+
+    <div class="shadow p-3 mb-5 bg-body rounded">
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {{ form.email.label(class="form-label") }}
+            {% if form.email.errors %}
+                {{ form.email(class="form-control is-invalid") }}
+                {% for error in form.username.errors %}
+                    <small><span style="color: red">{{ error }}</span></small>
+                {% endfor %}
+            {% else %}
+                {{ form.email(class="form-control") }}
+            {% endif %}
+            <br/><br/>
+
+<!--            {{ form.recaptcha }}-->
+<!--            <br/>-->
+
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+
+
+{% endblock content %}

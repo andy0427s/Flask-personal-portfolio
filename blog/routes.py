@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
-from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD
+from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD, EmailForm
 from blog.models import Users, Posts, Comments
 
 import os
@@ -93,6 +93,30 @@ def register():
                            form=form)
 
 
+@app.route('/user/add/verification', methods=['GET', 'POST'])
+def resend_verification():
+    form = EmailForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user:
+            token = user.create_token()
+            user_email = form.email.data
+            send_mail(sender='andy0427s@gmail.com',
+                      recipients=[user_email],
+                      subject='Activate your account',
+                      template='welcome',
+                      mailtype='html',
+                      user=user,
+                      token=token)
+            form.email.data = ''
+            flash("Check Your Email and Activate Your Account!", category="success")
+        else:
+            form.email.data = ''
+            flash("Not found the valid account, please register your account first!", category="warning")
+        return redirect(url_for("register"))
+    return render_template("resend_email.html", form=form)
+
+
 @app.route('/user_confirm/<token>')
 def user_confirm(token):
     user = Users()
@@ -107,6 +131,7 @@ def user_confirm(token):
     else:
         flash('Wrong Token, please send the registration mail again!', category='danger')
         return redirect(url_for('register'))
+
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -360,7 +385,8 @@ def login():
                 else:
                     flash('Wrong Password - Try Again!', category="danger")
             else:
-                flash('Sorry, your account does not be activated, please activate your account first!', category="warning")
+                flash('Sorry, your account does not be activated, please activate your account first!',
+                      category="warning")
                 return redirect(url_for('register'))
         else:
             flash("The User Doesn't Exist! - Try Again...", category="danger")
@@ -448,5 +474,3 @@ def switch_next_page(id):
         return redirect(url_for('post', id=next_post.id))
     else:
         return redirect(url_for('post', id=id))
-
-
