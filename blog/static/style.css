@@ -1,7 +1,12 @@
 h1 {
     color: darkblue;
-    font-size: 60px;
+    font-size: 45px;
 }
+
+/*h2 {*/
+/*    color: darkblue;*/
+/*    font-size: 40px;*/
+/*}*/
 
 body {
     background: #f4f4f4;
@@ -70,6 +75,12 @@ body {
     padding: 10px 20px;
     transition: all 0.5s;
 }
+
+#main-link {
+    color: white;
+    text-decoration: none;
+}
+
 
 .posts-container {
     display: flex;
@@ -150,4 +161,61 @@ body {
 /*    background: #343A40;*/
 /*}*/
 
+.call-to-action {
+  position: relative;
+  background-color: #343a40;
+  background: url("../static/img/bg-masthead0.jpg") no-repeat center center;
+  background-size: cover;
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+}
+
+.call-to-action .overlay {
+  position: absolute;
+  background-color: #212529;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+}
+
+
+.contact-info .fa {
+  padding-right: 5px;
+}
+
+#contact .form-control {
+  border: none;
+  border-bottom: 2px solid #f0f0f0;
+  border-radius: 0px;
+  box-shadow: none;
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  -webkit-transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.4s;
+}
+
+#contact .form-control:focus {
+  border-bottom-color: #999999;
+}
+
+#contact input {
+  height: 55px;
+}
+
+#contact button#submit {
+  background: #2b2b2b;
+  border: none;
+  border-radius: 50px;
+  color: #ffffff;
+  height: 50px;
+  margin-top: 24px;
+}
+
+#contact button#submit:hover {
+  background: #7682cc;
+  color: #ffffff;
+}
 

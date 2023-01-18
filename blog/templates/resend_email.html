@@ -2,7 +2,7 @@
 {% block content %}
 
 
-    <h2>Email Your Email Address</h2>
+    <h1>Enter Your Email Address</h2>
 
     <div class="shadow p-3 mb-5 bg-body rounded">
 
@@ -26,6 +26,7 @@
             {{ form.submit(class="btn btn-primary") }}
         </form>
     </div>
-
+    <a href="{{ url_for('register')}}" class="btn btn-outline-secondary btn-sm">Back To Register page</a>
+    <br><br>
 
 {% endblock content %}

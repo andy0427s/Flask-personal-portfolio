@@ -15,6 +15,12 @@
             <a class="nav-link" href="{{ url_for('index') }}">Home</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index', _anchor='about') }}">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index', _anchor='projects') }}">Projects</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{{ url_for('posts') }}">Blog</a>
           </li>
             {% if current_user.is_authenticated %}
@@ -45,7 +51,6 @@
             <a class="nav-link" href="{{ url_for('login') }}"><button type="button" class="btn btn-outline-success btn-lg ml-sm-2">Log In</button></a>
         </div>
         {% endif %}
-
 
 
 </nav>

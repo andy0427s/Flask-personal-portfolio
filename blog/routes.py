@@ -1,3 +1,4 @@
+import requests
 from flask import render_template, flash, request, redirect, url_for
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -5,8 +6,8 @@ from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
 from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD, EmailForm, \
-    ResetPWForm, FormResetPWD
-from blog.models import Users, Posts, Comments
+    ResetPWForm, FormResetPWD, ContactForm
+from blog.models import Users, Posts, Comments, Projects
 
 import os
 import uuid as uuid
@@ -15,10 +16,29 @@ from PIL import Image
 from blog.sendmail import send_mail
 
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def index():
-    return render_template("index.html")
+    form = ContactForm()
+    if form.validate_on_submit():
+        user_email = form.email.data
+        user_name = form.name.data
+        user_message = form.message.data
+        send_mail(sender=user_email,
+                  recipients=["andylee22011528@gmail.com"],
+                  subject='Notice from website visitors',
+                  template='contact_mail',
+                  mailtype='html',
+                  username=user_name,
+                  message=user_message,
+                  email=user_email)
+        flash("goodas", category="success")
+        form.email.data = ""
+        form.name.data = ""
+        form.message.data = ""
+
+    projects = Projects.query.order_by(Projects.date_created.desc())
+    return render_template("index.html", form=form, projects=projects)
 
 
 @app.errorhandler(404)
@@ -29,31 +49,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("404.html"), 500
-
-
-# @app.route('/user/add', methods=['GET', 'POST'])
-# def register():
-#     name = None
-#     form = UserForm()
-#     if form.validate_on_submit():
-#         user = Users.query.filter_by(email=form.email.data).first()
-#         if user is None:
-#             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
-#             user = Users(name=form.name.data, username=form.username.data, email=form.email.data,
-#                          password_hash=hashed_pw)
-#             db.session.add(user)
-#             db.session.commit()
-#         name = form.name.data
-#         form.name.data = ''
-#         form.username.data = ''
-#         form.email.data = ''
-#         form.password_hash.data = ''
-#         flash("User Registered Successfully!", category="success")
-#     our_users = Users.query.order_by(Users.date_added)
-#     return render_template("register.html",
-#                            name=name,
-#                            form=form,
-#                            our_users=our_users)
 
 
 @app.route('/user/add', methods=['GET', 'POST'])
@@ -250,11 +245,21 @@ def add_post():
 #     posts = Posts.query.order_by(Posts.date_posted)
 #     return render_template("posts.html", posts=posts)
 
-@app.route('/posts')
-@app.route('/posts/page/<int:page>')
+@app.route('/posts', methods=['GET', 'POST'])
+@app.route('/posts/page/<int:page>', methods=['GET', 'POST'])
 def posts(page=1):
+    form1 = EmailForm()
+    if form1.validate_on_submit():
+        user_email = form1.email.data
+        send_mail(sender='andy0427s@gmail.com',
+                  recipients=[user_email],
+                  subject='Thank for subscribe our newsletter',
+                  template='subscribe_mail',
+                  mailtype='html')
+        form1.email.data = ''
+
     posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=page, per_page=5)
-    return render_template("posts.html", posts=posts, page=page)
+    return render_template("posts.html", posts=posts, page=page, form1=form1)
 
 
 @app.route('/posts/<int:id>', methods=['GET', 'POST'])
@@ -484,7 +489,7 @@ def search():
     posts = Posts.query
     if form.validate_on_submit():
         post.searched = form.searched.data
-        posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
+        posts = posts.filter(Posts.title.like('%' + post.searched + '%'))
         posts = posts.order_by(Posts.title).all()
         return render_template("search.html",
                                form=form,
@@ -525,3 +530,5 @@ def switch_next_page(id):
         return redirect(url_for('post', id=next_post.id))
     else:
         return redirect(url_for('post', id=id))
+
+

@@ -79,3 +79,11 @@ class Comments(db.Model):
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+
+class Projects(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    date_created = db.Column(db.Date, default="2022-09-26")
+    img = db.Column = db.Column(db.String(255), nullable=True)

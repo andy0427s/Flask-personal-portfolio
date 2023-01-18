@@ -21,33 +21,35 @@
     <div id="vanta-canvas" class="flex">
       <div class="text">
           Hello, I'm
-          <span class="highlight">Tsang An Lee</span>
+          <span class="highlight">Andy Lee</span>
           .
           <br>
           I'm a full-stack web developer.
       </div>
       <div class="button-main" dest="about">
-            View my work <i class="mdi mdi-arrow-right"></i>
+          <a id="main-link" href="#projects">View my work <i class="mdi mdi-arrow-right"></i></a>
       </div>
     </div>
-
+    <br><br>
     <div class="container">
         <div class="row main-container">
             <div class="col">
-                <h1>About</h1>
-                <p>
-                    Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
-                    This is my personal portfolio
-                </p>
+                <h1 id="about">About me</h1>
+                <h5>
+                    Hi, I'm Andy Lee, and I graduated from the University of Universe in 2015 with a degree in Computer Science. My interests are in Backend development, and I love to create beautiful and performant products with delightful user experiences.
+                    I previously worked at Company X, where I led the XYZ project. XYZ was a service for companies to make urban transportation expenses convenient. Companies can create employee groups, set ride policies, and share corporate payment methods with their employees.
+                    I'm interested in the Front End Engineer role at XYZ as I like working in this ridesharing space and creating products to improve the lives of users.
+                </h5>
+            </div>
+            <div class="col">
+                <img src="../static/img/cat.jpeg" width="550">
             </div>
         </div>
+        <br><br>
         <div class="row main-container">
             <div class="col">
                 <h1>Skills</h1>
-                <p>
-                    Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
-                    This is my personal portfolio
-                </p>
+
                 <section class="skills-icons">
                     <img src="../static/img/html-5.png" class="skill-icon" alt="HTML icon" width="64">
                     <img src="../static/img/css-3.png" class="skill-icon" alt="CSS icon" width="64">
@@ -62,16 +64,34 @@
                 </section>
             </div>
         </div>
+        <br><br>
         <div class="row main-container">
             <div class="col">
-                <h1>Projects</h1>
-                <p>
-                    Hello, my name is Tsang An Lee. I'm studying MSc in Computing in Cardiff university.
-                    This is my personal portfolio
-                </p>
+                <h1 id="projects">Projects</h1>
+
+                <div class="row card-deck">
+                    {% for project in projects %}
+                    <div class="col-4 mb-4">
+                      <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/project/' +  project.img) }}" class="card-img-top" alt="..." style="width: 100%">
+                        <div class="card-body">
+                          <h5 class="card-title">{{ project.title }}</h5>
+                          <p class="card-text">{{ project.content }}</p>
+                          <p class="card-text"><small class="text-muted">Created: {{ project.date_created }}</small></p>
+                        </div>
+                          <div class="card-footer">
+                              <a href="https://github.com/" class="card-link"><img src="../static/img/link-github.png" width="35"></a>
+                          </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    <div>
+    </div>
+    <br>
+    {% include 'footer.html' %}
+
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -92,5 +112,5 @@
         color: 0x3fbbff
       })
     </script>
-</body>
+    </body>
 </html>
