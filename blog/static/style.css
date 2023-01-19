@@ -219,3 +219,34 @@ body {
   color: #ffffff;
 }
 
+.center-form{
+    color: black;
+}
+
+.table-container {
+    table-layout: fixed;
+}
+
+.table-container td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    nowrap:false;
+}
+
+.table-container th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    nowrap:false;
+}
+
+.admin-sidebar {
+    background-color: #343a40;
+}
+
+.admin-sidebar td {
+    text-align: left;
+}
+
+.admin-sidebar td a{
+    color: white;
+}

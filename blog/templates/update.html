@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% if id == current_user.id %}
+{% if id == current_user.id or current_user.id == 1 %}
 
-    <h2>Update User Profile</h2>
+    <h1>Update User Profile</h1>
     <br>
 
 

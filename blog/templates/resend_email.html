@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-    <h1>Enter Your Email Address</h2>
+<div class="row justify-content-md-center flex center-form">
+    <h1>Enter Your Email Address</h1>
 
     <div class="shadow p-3 mb-5 bg-body rounded">
-
-        <form method="POST">
+        <div class="col" style="width: 500px">
+            <form method="POST">
             {{ form.hidden_tag() }}
 
             {{ form.email.label(class="form-label") }}
@@ -25,8 +25,11 @@
 
             {{ form.submit(class="btn btn-primary") }}
         </form>
+        </div>
     </div>
     <a href="{{ url_for('register')}}" class="btn btn-outline-secondary btn-sm">Back To Register page</a>
     <br><br>
+</div>
+
 
 {% endblock content %}

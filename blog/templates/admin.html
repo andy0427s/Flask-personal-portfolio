@@ -1,7 +1,100 @@
 {% extends "base.html" %}
-{% block content %}
 
-    <h2>Admin Area</h2>
-    <p>Do some Admin-y type things here...</p>
+{% block box %}
+<div class="row ml-4">
+</div>
 
-{% endblock content %}
+    <div class="row ml-2 mr-2">
+        <div class="col-md-2">
+            <!-- A vertical navbar -->
+            <nav class="navbar navbar-dark bg-dark">
+
+              <!-- Links -->
+              <ul class="navbar-nav">
+                 <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin') }}">Admin Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin_user') }}">User Management</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin_project') }}">Project Management</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin_post') }}">Post Management</a>
+                </li>
+                  <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin_comment') }}">Comment Management</a>
+                </li>
+              </ul>
+
+            </nav>
+<!--            <table class="table admin-sidebar">-->
+<!--              <thead>-->
+<!--                <tr>-->
+<!--                  <td scope="col"><a class="nav-link" href="{{ url_for('admin') }}">Admin Dashboard</a></td>-->
+<!--                </tr>-->
+<!--              </thead>-->
+<!--              <tbody>-->
+<!--                    <tr>-->
+<!--                      <td><a class="nav-link" href="{{ url_for('admin_user') }}">User Management</a></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td><a class="nav-link" href="{{ url_for('admin_user') }}">User Management</a></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td><a class="nav-link" href="{{ url_for('admin_user') }}">User Management</a></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td><a class="nav-link" href="{{ url_for('admin_user') }}">User Management</a></td>-->
+<!--                    </tr>-->
+<!--              </tbody>-->
+<!--            </table>-->
+        </div>
+
+        <div class="col-md-10 ">
+            {% block page %}
+            <h1>Admin Dashboard</h1>
+            <br>
+            <h2>Welcome back, {{ current_user.username }} (Admin)</h2>
+            <br><br>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h1 class="card-title">{{ users }}</h1>
+                        <h5 class="card-text">Users</h5>
+                      </div>
+                    </div>
+                  </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h1 class="card-title">{{ projects }}</h1>
+                        <h5 class="card-text">Projects</h5>
+                      </div>
+                    </div>
+                  </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h1 class="card-title">{{ posts }}</h1>
+                        <h5 class="card-text">Posts</h5>
+                      </div>
+                    </div>
+                  </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h1 class="card-title">{{ comments }}</h1>
+                        <h5 class="card-text">Comments</h5>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            {% endblock page %}
+        </div>
+    </div>
+    <br><br>
+
+{% endblock box %}

@@ -184,7 +184,7 @@ def update(id):
 @app.route('/delete/<int:id>')
 @login_required
 def delete(id):
-    if id == current_user.id:
+    if id == current_user.id or current_user.id == 1:
 
         user_to_delete = Users.query.get_or_404(id)
         name = None
@@ -475,7 +475,23 @@ def reset_password(token):
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    id = current_user.id
+    page_post = request.args.get('page_post', 1, type=int)
+    pagination_post = Posts.query.filter_by(poster_id=id).order_by(Posts.date_posted).paginate(page=page_post,
+                                                                                               per_page=5)
+    posts = pagination_post.items
+
+    page_comment = request.args.get('page_comment', 1, type=int)
+    pagination_comment = Comments.query.filter_by(author_id=id).order_by(Comments.date_posted).paginate(
+        page=page_comment,
+        per_page=5)
+    comments = pagination_comment.items
+
+    return render_template('dashboard.html',
+                           posts=posts,
+                           pagination_post=pagination_post,
+                           comments=comments,
+                           pagination_comment=pagination_comment)
 
 
 @login_manager.user_loader
@@ -508,7 +524,72 @@ def base():
 def admin():
     id = current_user.id
     if id == 1:
-        return render_template("admin.html")
+        users = Users.query.count()
+        projects = Projects.query.count()
+        posts = Posts.query.count()
+        comments = Comments.query.count()
+
+        return render_template("admin.html",
+                               users=users,
+                               projects=projects,
+                               posts=posts,
+                               comments=comments)
+    else:
+        flash("Sorry, you have to be Admin to access this page", category="danger")
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/admin/user')
+@login_required
+def admin_user():
+    id = current_user.id
+    if id == 1:
+        page = request.args.get('page', 1, type=int)
+        pagination = Users.query.order_by(Users.date_added).paginate(page=page, per_page=10)
+        users = pagination.items
+        return render_template("admin_user.html", users=users, pagination=pagination)
+    else:
+        flash("Sorry, you have to be Admin to access this page", category="danger")
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/admin/project')
+@login_required
+def admin_project():
+    id = current_user.id
+    if id == 1:
+        page = request.args.get('page', 1, type=int)
+        pagination = Projects.query.order_by(Projects.id).paginate(page=page, per_page=10)
+        projects = pagination.items
+        return render_template("admin_project.html", projects=projects, pagination=pagination)
+    else:
+        flash("Sorry, you have to be Admin to access this page", category="danger")
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/admin/post')
+@login_required
+def admin_post():
+    id = current_user.id
+    if id == 1:
+        page = request.args.get('page', 1, type=int)
+        pagination = Posts.query.order_by(Posts.date_posted).paginate(page=page, per_page=10)
+        posts = pagination.items
+        return render_template("admin_post.html", posts=posts, pagination=pagination)
+    else:
+        flash("Sorry, you have to be Admin to access this page", category="danger")
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/admin/comment')
+@login_required
+def admin_comment():
+    id = current_user.id
+    if id == 1:
+        page = request.args.get('page', 1, type=int)
+        pagination = Comments.query.order_by(Comments.date_posted).paginate(page=page, per_page=10)
+        comments = pagination.items
+        return render_template("admin_comment.html", comments=comments, pagination=pagination)
     else:
         flash("Sorry, you have to be Admin to access this page", category="danger")
         return redirect(url_for('dashboard'))
@@ -530,5 +611,3 @@ def switch_next_page(id):
         return redirect(url_for('post', id=next_post.id))
     else:
         return redirect(url_for('post', id=id))
-
-

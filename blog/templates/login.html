@@ -1,47 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-    <h1>Login here</h1>
+    <div class="row justify-content-md-center flex center-form">
+        <h1>Login here</h1>
     <br/><br/>
 
-    <div class="shadow p-3 mb-5 bg-body rounded">
+        <div class="shadow p-3 mb-5 bg-body rounded">
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
+            <form method="POST">
+                {{ form.hidden_tag() }}
 
-            {{ form.username.label(class="form-label") }}
-            {% if form.username.errors %}
-                {{ form.username(class="form-control is-invalid") }}
-                {% for error in form.username.errors %}
-                    <small><span style="color: red">{{ error }}</span></small>
-                {% endfor %}
-            {% else %}
-                {{ form.username(class="form-control") }}
-                <small><span style="color: darkgray">Between 8 and 30 characters long, and only contain alphanumeric letters</span></small>
-            {% endif %}
-            <br/><br/>
+                {{ form.username.label(class="form-label") }}
+                {% if form.username.errors %}
+                    {{ form.username(class="form-control is-invalid") }}
+                    {% for error in form.username.errors %}
+                        <small><span style="color: red">{{ error }}</span></small>
+                    {% endfor %}
+                {% else %}
+                    {{ form.username(class="form-control") }}
+                    <small><span style="color: darkgray">Between 8 and 30 characters long, and only contain alphanumeric letters</span></small>
+                {% endif %}
+                <br/><br/>
 
-            {{ form.password.label(class="form-label") }}
-            {% if form.password.errors %}
-                {{ form.password(class="form-control is-invalid") }}
-                {% for error in form.password.errors %}
-                    <small><span style="color: red">{{ error }}</span></small>
-                {% endfor %}
-            {% else %}
-                {{ form.password(class="form-control") }}
-                <small><span style="color: darkgray">Between 8 and 10 characters long, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character</span></small>
-            {% endif %}
-            <br/><br/>
+                {{ form.password.label(class="form-label") }}
+                {% if form.password.errors %}
+                    {{ form.password(class="form-control is-invalid") }}
+                    {% for error in form.password.errors %}
+                        <small><span style="color: red">{{ error }}</span></small>
+                    {% endfor %}
+                {% else %}
+                    {{ form.password(class="form-control") }}
+                    <small><span style="color: darkgray">Between 8 and 10 characters long, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character</span></small>
+                {% endif %}
+                <br/><br/>
 
-<!--            {{ form.recaptcha }}-->
-<!--            <br/>-->
+    <!--            {{ form.recaptcha }}-->
+    <!--            <br/>-->
 
-            {{ form.submit(class="btn btn-primary") }}
+                {{ form.submit(class="btn btn-primary") }}
 
-            <a href="{{ url_for('resend_reset') }}">Forgot Password?</a>
-        </form>
+                <a href="{{ url_for('resend_reset') }}">Forgot Password?</a>
+            </form>
+        </div>
     </div>
+
+
 
 
 {% endblock content %}

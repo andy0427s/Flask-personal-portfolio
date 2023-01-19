@@ -2,7 +2,7 @@
 {% block content %}
 
 
-    <h2>Dashboard</h2>
+    <h1>Dashboard</h1>
     <br/>
     <div class="card">
       <div class="card-header">
@@ -51,6 +51,7 @@
                 </div>
             </div>
       </div>
+
     </div>
 
     <!-- Modal -->
@@ -74,6 +75,198 @@
         </div>
       </div>
     </div>
+
+    <br><br>
+
+    <h1 id="personal_post">Personal Post Management</h1>
+    <br/>
+    <div class="card">
+            <table class="table is-fullwidth is-hoverable is-striped table-container">
+                <thead class="thead-dark" >
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Content</th>
+              <th>Date_Posted</th>
+              <th>Post user ID</th>
+              <th>Post img path</th>
+              <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for post in posts %}
+            <tr>
+                <td>{{ post.id }}</td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.content | truncate(30) }}</td>
+                <td>{{ post.date_posted }}</td>
+                <td>{{ post.poster_id }}</td>
+                <td>{{ post.post_pic }}</td>
+                <td>
+                    <div class="tags">
+                        <a href="" class="tag is-success is-light">
+                            <span class="icon">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </span>
+                            Edit
+                        </a>
+                        <a href="" class="tag is-danger is-light">
+                            <span class="icon">
+                                <i class="mdi mdi-trash-can-outline"></i>
+                            </span>
+                            Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+    </div>
+
+    <br>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination ">
+
+        {% if pagination_post.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('dashboard',_anchor='personal_post', page_post=pagination_post.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for('dashboard',_anchor='personal_post', page_post=pagination_post.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for page in pagination_post.iter_pages() %}
+          {% if page %}
+            {% if page != pagination_post.page %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('dashboard',_anchor='personal_post', page_post=page) }}">
+                  {{ page }}
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item active"><a class="page-link" href="">{{ page }}</a></li>
+            {% endif %}
+          {% else %}
+            <li class="page-item"><a class="page-link">...</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if pagination_post.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_post', page_post=pagination_post.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_post', page_post=pagination_post.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <br><br>
+
+     <h1 id="personal_comment">Comment Management</h1>
+            <table class="table is-fullwidth is-hoverable is-striped table-container">
+                <thead class="thead-dark" >
+            <tr>
+              <th>ID</th>
+              <th>Body</th>
+              <th>Date_Posted</th>
+              <th>Author ID</th>
+              <th>Post ID</th>
+              <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for comment in comments %}
+            <tr>
+                <td>{{ comment.id }}</td>
+                <td>{{ comment.body | truncate(30) }}</td>
+                <td>{{ comment.date_posted }}</td>
+                <td>{{ comment.author_id }}</td>
+                <td>{{ comment.post_id }}</td>
+                <td>
+                    <div class="tags">
+                        <a href="" class="tag is-success is-light">
+                            <span class="icon">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </span>
+                            Edit
+                        </a>
+                        <a href="" class="tag is-danger is-light">
+                            <span class="icon">
+                                <i class="mdi mdi-trash-can-outline"></i>
+                            </span>
+                            Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination ">
+
+        {% if pagination_comment.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_comment', page_comment=pagination_comment.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_comment', page_comment=pagination_comment.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for page in pagination_comment.iter_pages() %}
+          {% if page %}
+            {% if page != pagination_comment.page %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_comment', page_comment=page) }}">
+                  {{ page }}
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item active"><a class="page-link" href="">{{ page }}</a></li>
+            {% endif %}
+          {% else %}
+            <li class="page-item"><a class="page-link">...</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if pagination_comment.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_comment', page_comment=pagination_comment.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" href="{{ url_for('dashboard', _anchor='personal_comment', page_comment=pagination_comment.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% endif %}
+      </ul>
+    </nav>
 
     <br><br>
 

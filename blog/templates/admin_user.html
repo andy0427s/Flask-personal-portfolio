@@ -1,0 +1,100 @@
+{% extends "admin.html" %}
+
+{% block page %}
+            <h1>User Management</h1>
+            <table class="table is-fullwidth is-hoverable is-striped table-container">
+                <thead class="thead-dark" >
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Activated Status</th>
+                <th>User description</th>
+              <th>Date_Added</th>
+                <th>Profile img path</th>
+              <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.confirm }}</td>
+                <td>{{ user.about_author |truncate(10) }}</td>
+                <td>{{ user.date_added }}</td>
+                <td>{{ user.profile_pic}}</td>
+                <td>
+                    <div class="tags">
+                        <a href="#" class="tag is-success is-light">
+                            <span class="icon">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                            </span>
+                            Edit
+                        </a>
+                        <a href="#" class="tag is-danger is-light">
+                            <span class="icon">
+                                <i class="mdi mdi-trash-can-outline"></i>
+                            </span>
+                            Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination ">
+
+        {% if pagination.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin_user', page=pagination.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="{{ url_for('admin_user', page=pagination.prev().page)}}" aria-label="Previous">
+              <span aria-label="true">&laquo; Previous</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for page in pagination.iter_pages() %}
+          {% if page %}
+            {% if page != pagination.page %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_user', page=page) }}">
+                  {{ page }}
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item active"><a class="page-link" href="">{{ page }}</a></li>
+            {% endif %}
+          {% else %}
+            <li class="page-item"><a class="page-link">...</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if pagination.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('admin_user', page=pagination.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" href="{{ url_for('admin_user', page=pagination.next().page )}}" aria-label="Next">
+            <span aria-hidden="true">Next &raquo;</span>
+          </a>
+        <li>
+        {% endif %}
+      </ul>
+    </nav>
+{% endblock page %}
