@@ -1,0 +1,35 @@
+{% extends "admin_post.html" %}
+{% block form_content %}
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+
+        <form action="/admin/post/add" method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control") }}
+            <br/>
+
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows='10') }}
+            <br/>
+
+            {{ form.poster_id.label(class="form-label") }}
+            {{ form.poster_id(class="form-control") }}
+            <br/>
+
+            {{ form.post_pic.label(class="form-label") }}
+            {{ form.post_pic(class="form-control") }}
+            <br/>
+<!--            {{ form.recaptcha }}-->
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{{ url_for('admin_post')}}" class="btn btn-secondary">Cancel</a>
+        </form>
+
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='content', language='en') }}
+    </div>
+
+
+{% endblock form_content %}

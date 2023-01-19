@@ -5,8 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 from blog import app, db, login_manager
-from blog.forms import UserForm, NameForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD, EmailForm, \
-    ResetPWForm, FormResetPWD, ContactForm
+from blog.forms import UserForm, PostForm, LoginForm, SearchForm, CommentForm, FormChangePWD, EmailForm, \
+    ResetPWForm, FormResetPWD, ContactForm, ProjectForm
 from blog.models import Users, Posts, Comments, Projects
 
 import os
@@ -239,11 +239,6 @@ def add_post():
 
     return render_template("add_post.html", form=form)
 
-
-# @app.route('/posts')
-# def posts():
-#     posts = Posts.query.order_by(Posts.date_posted)
-#     return render_template("posts.html", posts=posts)
 
 @app.route('/posts', methods=['GET', 'POST'])
 @app.route('/posts/page/<int:page>', methods=['GET', 'POST'])
@@ -553,6 +548,103 @@ def admin_user():
         return redirect(url_for('dashboard'))
 
 
+@app.route('/admin/user/add', methods=['GET', 'POST'])
+@login_required
+def admin_user_add():
+    form = UserForm()
+    print(form.errors)
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user is None:
+            hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
+            user = Users(name=form.name.data, username=form.username.data, email=form.email.data,
+                         password_hash=hashed_pw, confirm=True, about_author=form.about_author.data)
+            db.session.add(user)
+            db.session.commit()
+
+        form.name.data = ''
+        form.username.data = ''
+        form.email.data = ''
+        form.password_hash.data = ''
+        form.password_hash2.data = ''
+        form.about_author.data = ''
+
+        flash("Successfully add the user!", category="success")
+        return redirect(url_for('admin_user'))
+    print(form.errors)
+    return render_template("admin_user_add.html", form=form)
+
+
+@app.route('/admin/user/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_user_edit(id):
+    form = UserForm()
+    name_to_update = Users.query.get_or_404(id)
+    if request.method == 'POST':
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        name_to_update.username = request.form['username']
+        name_to_update.about_author = request.form['about_author']
+
+        if request.files['profile_pic']:
+            output_size = (512, 512)
+            name_to_update.profile_pic = request.files['profile_pic']
+            # Generate a unique/secure filename
+            pic_filename = secure_filename(name_to_update.profile_pic.filename)
+            pic_name = str(uuid.uuid1()) + "_" + pic_filename
+            with Image.open(name_to_update.profile_pic.stream) as i:
+                i.thumbnail(output_size)
+                i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+
+            # Save the profile img to the static directory
+            # basedir = os.path.abspath(os.path.dirname(__file__))
+
+            # i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+            # Save secured filename in db
+            name_to_update.profile_pic = pic_name
+            try:
+                db.session.commit()
+                flash("User Updated Successfully", category="success")
+                return redirect(url_for('admin_user'))
+                # return render_template("update.html",
+                #                        form=form,
+                #                        name_to_update=name_to_update,
+                #                        id=id)
+            except:
+                flash("Error! Looks like there was a problem...try again!", category="danger")
+                return redirect(url_for('admin_user'))
+        else:
+            db.session.commit()
+            flash("User Updated Successfully", category="success")
+            return redirect(url_for('admin_user'))
+    else:
+        return render_template("admin_user_form.html",
+                               form=form,
+                               name_to_update=name_to_update,
+                               id=id)
+
+
+@app.route('/admin/user/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_user_delete(id):
+    if current_user.id == 1:
+        user_to_delete = Users.query.get_or_404(id)
+        form = UserForm()
+
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash("User Deleted Successfully!", category="success")
+            return redirect(url_for('admin_user'))
+
+        except:
+            flash("Whoops! There was a problem deleting user, try again!", category="warning")
+            return redirect(url_for('admin_user'))
+    else:
+        flash("Sorry, you can't delete that user!", category="danger")
+        return redirect(url_for('admin_user'))
+
+
 @app.route('/admin/project')
 @login_required
 def admin_project():
@@ -565,6 +657,77 @@ def admin_project():
     else:
         flash("Sorry, you have to be Admin to access this page", category="danger")
         return redirect(url_for('dashboard'))
+
+
+@app.route('/admin/project/add', methods=['GET', 'POST'])
+@login_required
+def admin_project_add():
+    form = ProjectForm()
+    if form.validate_on_submit():
+        project = Projects(title=form.title.data,
+                           content=form.content.data,
+                           date_created=form.date_created.data,
+                           img=form.img_path.data)
+        form.title.data = ''
+        form.content.data = ''
+        form.date_created.data = ''
+        form.img_path.data = ''
+        db.session.add(project)
+        db.session.commit()
+        flash("Your project has been created.", category="success")
+        return redirect(url_for('admin_project'))
+
+    return render_template('admin_project_add.html', form=form)
+
+
+@app.route('/admin/project/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_project_edit(id):
+    form = ProjectForm()
+    project = Projects.query.get_or_404(id)
+    print(form.errors)
+    if form.validate_on_submit():
+        project.title = form.title.data
+        project.content = form.content.data
+        project.img = form.img_path.data
+        db.session.add(project)
+        db.session.commit()
+        flash("Project Has Been Updated!", category="success")
+        return redirect(url_for('admin_project'))
+
+    print(form.errors)
+
+    if current_user.id == 1:
+        form.title.data = project.title
+        form.content.data = project.content
+        form.img_path.data = project.img
+        return render_template('admin_project_edit.html',
+                               form=form,
+                               project=project)
+    else:
+        flash("You Aren't Authorized To Edit that Post", category="danger")
+        return redirect(url_for('admin_project'))
+
+
+@app.route('/admin/project/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_project_delete(id):
+    if current_user.id == 1:
+        form = ProjectForm()
+        project = Projects.query.get_or_404(id)
+
+        try:
+            db.session.delete(project)
+            db.session.commit()
+            flash("User Deleted Successfully!", category="success")
+            return redirect(url_for('admin_project'))
+
+        except:
+            flash("Whoops! There was a problem deleting user, try again!", category="warning")
+            return redirect(url_for('admin_project'))
+    else:
+        flash("Sorry, you can't delete that user!", category="danger")
+        return redirect(url_for('admin_project'))
 
 
 @app.route('/admin/post')
@@ -581,6 +744,90 @@ def admin_post():
         return redirect(url_for('dashboard'))
 
 
+@app.route('/admin/post/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_post_edit(id):
+    post = Posts.query.get_or_404(id)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        post_pic = form.post_pic.data
+
+        if request.files['post_pic']:
+            post_pic_filename = secure_filename(post_pic.filename)
+            post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
+            post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_name))
+            post.post_pic = post_pic_name
+
+        db.session.add(post)
+        db.session.commit()
+        flash("Post Has Been Updated!", category="success")
+        return redirect(url_for('admin_post'))
+
+    if current_user.id == 1:
+        form.title.data = post.title
+        form.content.data = post.content
+        return render_template('admin_post_form.html',
+                               form=form,
+                               id=post.id)
+    else:
+        flash("You Aren't Authorized To Edit that Post", category="danger")
+        return redirect(url_for('admin_post'))
+
+
+@app.route('/admin/post/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_post_delete(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    id = current_user.id
+    if id == 1:
+
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash('Blog Post Was Deleted!', category="success")
+            return redirect(url_for('admin_post'))
+
+        except:
+            flash("Whoops! There was a problem, please try again!", category="warning")
+            return redirect(url_for('admin_post'))
+    else:
+        flash("You Aren't Authorized To Delete That Post!", category="danger")
+        return redirect(url_for('admin_post'))
+
+
+@app.route('/admin/post/add', methods=['GET', 'POST'])
+@login_required
+def admin_post_add():
+    form = PostForm()
+    if form.validate_on_submit():
+        poster = form.poster_id.data
+        post_pic = form.post_pic.data
+
+        if request.files['post_pic']:
+            post_pic_filename = secure_filename(post_pic.filename)
+            post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
+            post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_name))
+            post = Posts(title=form.title.data,
+                         content=form.content.data,
+                         poster_id=poster,
+                         post_pic=post_pic_name)
+        else:
+            post = Posts(title=form.title.data,
+                         content=form.content.data,
+                         poster_id=poster)
+        form.title.data = ''
+        form.content.data = ''
+        form.post_pic.data = ''
+        db.session.add(post)
+        db.session.commit()
+        flash("Blog Post Submitted Successfully!", category="success")
+        return redirect(url_for('admin_post'))
+
+    return render_template("admin_post_add.html", form=form)
+
+
 @app.route('/admin/comment')
 @login_required
 def admin_comment():
@@ -593,6 +840,68 @@ def admin_comment():
     else:
         flash("Sorry, you have to be Admin to access this page", category="danger")
         return redirect(url_for('dashboard'))
+
+
+@app.route('/admin/comment/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_comment_edit(id):
+    comment = Comments.query.get_or_404(id)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment.body = form.body.data
+        db.session.add(comment)
+        db.session.commit()
+        flash("Comment Has Been Updated", category="success")
+        return redirect(url_for('admin_comment'))
+
+    if current_user.id == 1:
+        form.body.data = comment.body
+        return render_template('admin_comment_form.html', form=form, id=comment.post_id)
+
+    else:
+        flash("You Aren't Authorized To Edit that comment", category="danger")
+        return redirect(url_for('admin_comment'))
+
+
+@app.route('/admin/comment/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_comment_delete(id):
+    comment_to_delete = Comments.query.get_or_404(id)
+    id = current_user.id
+    post_id = comment_to_delete.post_id
+    if id == 1:
+
+        try:
+            db.session.delete(comment_to_delete)
+            db.session.commit()
+            flash('Comment Was Deleted!', category="success")
+            return redirect(url_for('admin_comment'))
+
+        except:
+            flash("Whoops! There was a problem, please try again!", category="warning")
+            return redirect(url_for('admin_comment'))
+    else:
+        flash("You Aren't Authorized To Delete That Post!", category="danger")
+        return redirect(url_for('admin_comment'))
+
+
+@app.route('/admin/comment/add', methods=['GET', 'POST'])
+@login_required
+def admin_comment_add():
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comments(body=form.body.data,
+                           author_id=form.author_id.data,
+                           post_id=form.post_id.data)
+        form.body.data = ''
+        form.author_id.data = ''
+        form.post_id.data = ''
+        db.session.add(comment)
+        db.session.commit()
+        flash("Your comment has been published.", category="success")
+        return redirect(url_for('admin_comment'))
+
+    return render_template('admin_comment_add.html', form=form)
 
 
 @app.route('/previous-page/<int:id>', methods=['GET', 'POST'])

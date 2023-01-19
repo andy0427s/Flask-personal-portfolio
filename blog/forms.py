@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm, RecaptchaField
 from flask_wtf.file import FileField
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField, IntegerField, \
+    DateField
 from wtforms.validators import DataRequired, EqualTo, Length, Regexp, Email
 from wtforms.widgets import TextArea
 from flask_ckeditor import CKEditorField
@@ -45,6 +46,7 @@ class PostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     content = CKEditorField("Content", validators=[DataRequired()])
     post_pic = FileField("Post Pic")
+    poster_id = IntegerField("Poster Id")
     # recaptcha = RecaptchaField()
     submit = SubmitField("Submit")
 
@@ -64,6 +66,8 @@ class SearchForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     body = CKEditorField('Content', validators=[DataRequired()])
+    author_id = IntegerField('Author Id')
+    post_id = IntegerField('Post Id')
     # recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
 
@@ -122,3 +126,10 @@ class ContactForm(FlaskForm):
     email = StringField("Email")
     message = TextAreaField("Message")
     submit = SubmitField("Send")
+
+
+class ProjectForm(FlaskForm):
+    title = StringField("Title")
+    content = TextAreaField("Content")
+    date_created = DateField("Date_created")
+    img_path = StringField("Image path")

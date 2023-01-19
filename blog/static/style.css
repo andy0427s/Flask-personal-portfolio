@@ -250,3 +250,8 @@ body {
 .admin-sidebar td a{
     color: white;
 }
+
+.add-button {
+    display: flex;
+    justify-content: space-between;
+}

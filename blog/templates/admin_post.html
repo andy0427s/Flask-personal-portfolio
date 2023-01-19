@@ -1,7 +1,13 @@
 {% extends "admin.html" %}
 
 {% block page %}
-            <h1>Post Management</h1>
+
+            <div class="add-button">
+                <h1>Post Management</h1>
+                <button class="btn" style="background-color: #f4f4f4"><a class="btn btn-success" href="{{ url_for('admin_post_add') }}">Add new post</a></button>
+            </div>
+            {% block form_content %}
+            <br><br>
             <table class="table is-fullwidth is-hoverable is-striped table-container">
                 <thead class="thead-dark" >
             <tr>
@@ -26,13 +32,15 @@
                 <td>{{ post.post_pic }}</td>
                 <td>
                     <div class="tags">
-                        <a href="#" class="tag is-success is-light">
+                        <a href="{{ url_for('admin_post_edit', id=post.id ) }}" class="btn btn-primary btn-sm tag is-success is-light">
                             <span class="icon">
                                 <i class="mdi mdi-square-edit-outline"></i>
                             </span>
                             Edit
                         </a>
-                        <a href="#" class="tag is-danger is-light">
+
+                        <a href="{{ url_for('admin_post_delete', id=post.id ) }}" class="tag is-danger is-light btn btn-danger btn-sm"
+                        , data-toggle="modal" data-target="#adminPostModal">
                             <span class="icon">
                                 <i class="mdi mdi-trash-can-outline"></i>
                             </span>
@@ -41,6 +49,28 @@
                     </div>
                 </td>
             </tr>
+
+            <div class="modal fade" id="adminPostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure to delete this post?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <a href="{{ url_for('admin_post_delete', id=post.id) }}",
+                       class="btn btn-outline-danger">Save Change</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {% endfor %}
         </tbody>
             </table>
@@ -93,4 +123,5 @@
         {% endif %}
       </ul>
     </nav>
+    {% endblock form_content %}
 {% endblock page %}

@@ -1,0 +1,33 @@
+{% extends "admin_project.html" %}
+{% block form_content %}
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+
+        <form action="/admin/project/add" method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control") }}
+            <br/>
+
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", rows='10') }}
+            <br/>
+
+            {{ form.date_created.label(class="form-label") }}
+            {{ form.date_created(class="form-control") }}
+            <br/>
+
+            {{ form.img_path.label(class="form-label") }}
+            {{ form.img_path(class="form-control") }}
+            <br/>
+<!--            {{ form.recaptcha }}-->
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{{ url_for('admin_project')}}" class="btn btn-secondary">Cancel</a>
+        </form>
+
+    </div>
+
+
+{% endblock form_content %}

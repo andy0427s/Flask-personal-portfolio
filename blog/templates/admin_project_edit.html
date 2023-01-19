@@ -1,0 +1,29 @@
+{% extends "admin_project.html" %}
+{% block form_content %}
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control", value=project.title ) }}
+            <br/>
+
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", value=project.content, rows=10 ) }}
+            <br/>
+
+            {{ form.img_path.label(class="form-label") }}
+            {{ form.img_path(class="form-control", value=project.img ) }}
+            <br/>
+<!--            {{ form.recaptcha }}-->
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{{ url_for('admin_project')}}" class="btn btn-secondary">Cancel</a>
+        </form>
+
+    </div>
+
+
+{% endblock form_content %}

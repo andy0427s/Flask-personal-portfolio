@@ -15,7 +15,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(120), nullable=False, unique=True)
     about_author = db.Column(db.Text(500), nullable=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    profile_pic = db.Column(db.String(255), nullable=True)
+    profile_pic = db.Column(db.String(255), nullable=True, default='default.jpg')
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Posts', backref='poster')
     comments = db.relationship('Comments', backref='author', lazy='dynamic')

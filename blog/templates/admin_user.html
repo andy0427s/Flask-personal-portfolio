@@ -1,7 +1,13 @@
 {% extends "admin.html" %}
 
 {% block page %}
-            <h1>User Management</h1>
+            <div class="add-button">
+                <h1>User Management</h1>
+                <button class="btn" style="background-color: #f4f4f4"><a class="btn btn-success" href="{{ url_for('admin_user_add') }}">Add new user</a></button>
+            </div>
+
+            {% block form_content %}
+            <br><br>
             <table class="table is-fullwidth is-hoverable is-striped table-container">
                 <thead class="thead-dark" >
             <tr>
@@ -25,18 +31,20 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.confirm }}</td>
-                <td>{{ user.about_author |truncate(10) }}</td>
+                <td>{{ user.about_author }}</td>
                 <td>{{ user.date_added }}</td>
                 <td>{{ user.profile_pic}}</td>
                 <td>
                     <div class="tags">
-                        <a href="#" class="tag is-success is-light">
+                        <a href="{{ url_for('admin_user_edit', id=user.id ) }}" class="btn btn-primary btn-sm tag is-success is-light">
                             <span class="icon">
                                 <i class="mdi mdi-square-edit-outline"></i>
                             </span>
                             Edit
                         </a>
-                        <a href="#" class="tag is-danger is-light">
+
+                        <a href="{{ url_for('admin_user_delete', id=user.id ) }}" class="tag is-danger is-light btn btn-danger btn-sm"
+                        , data-toggle="modal" data-target="#adminUserModal">
                             <span class="icon">
                                 <i class="mdi mdi-trash-can-outline"></i>
                             </span>
@@ -45,6 +53,28 @@
                     </div>
                 </td>
             </tr>
+
+            <!-- Modal -->
+            <div class="modal fade" id="adminUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure to delete this user?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <a href="{{ url_for('admin_user_delete', id=user.id) }}",
+                       class="btn btn-outline-danger">Save Change</a>
+                  </div>
+                </div>
+              </div>
+            </div>
             {% endfor %}
         </tbody>
             </table>
@@ -97,4 +127,7 @@
         {% endif %}
       </ul>
     </nav>
+    {% endblock form_content %}
+
+
 {% endblock page %}
