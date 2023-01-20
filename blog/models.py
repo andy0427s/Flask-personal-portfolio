@@ -13,7 +13,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    about_author = db.Column(db.Text(500), nullable=True)
+    about_author = db.Column(db.Text(500), nullable=True, default='This user does not write anything yet...')
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     profile_pic = db.Column(db.String(255), nullable=True, default='default.jpg')
     password_hash = db.Column(db.String(128))

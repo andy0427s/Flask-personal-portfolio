@@ -38,7 +38,7 @@
                         </a>
 
                         <a href="{{ url_for('admin_comment_delete', id=comment.id ) }}" class="tag is-danger is-light btn btn-danger btn-sm"
-                        , data-toggle="modal" data-target="#adminCommentModal">
+                        , data-toggle="modal" data-target="#adminCommentModal{{comment.id}}">
                             <span class="icon">
                                 <i class="mdi mdi-trash-can-outline"></i>
                             </span>
@@ -47,8 +47,10 @@
                     </div>
                 </td>
             </tr>
+            {% endfor %}
+            {% for comment in comments %}
             <!-- Modal -->
-            <div class="modal fade" id="adminCommentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="adminCommentModal{{comment.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">

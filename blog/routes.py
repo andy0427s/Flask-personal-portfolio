@@ -329,6 +329,101 @@ def delete_post(id):
         return render_template("posts.html", posts=posts, page=1)
 
 
+@app.route('/user/post/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def user_post_edit(id):
+    post = Posts.query.get_or_404(id)
+    form = PostForm()
+    id = current_user.id
+    page_post = request.args.get('page_post', 1, type=int)
+    pagination_post = Posts.query.filter_by(poster_id=id).order_by(Posts.date_posted).paginate(page=page_post,
+                                                                                               per_page=5)
+    posts = pagination_post.items
+
+    page_comment = request.args.get('page_comment', 1, type=int)
+    pagination_comment = Comments.query.filter_by(author_id=id).order_by(Comments.date_posted).paginate(
+        page=page_comment,
+        per_page=5)
+    comments = pagination_comment.items
+
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        post_pic = form.post_pic.data
+
+        if request.files['post_pic']:
+            post_pic_filename = secure_filename(post_pic.filename)
+            post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
+            post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_name))
+            post.post_pic = post_pic_name
+
+        db.session.add(post)
+        db.session.commit()
+        flash("Post Has Been Updated!", category="success")
+        return redirect(url_for('dashboard', _anchor='personal_post',
+                                posts=posts,
+                                comments=comments,
+                                pagination_comment=pagination_comment,
+                                pagination_post=pagination_post))
+
+    if current_user.id == post.poster_id or current_user.id == 1:
+        form.title.data = post.title
+        form.content.data = post.content
+        return render_template('user_post_edit.html', form=form, id=post.id,
+                               posts=posts,
+                               comments=comments,
+                               pagination_post=pagination_post,
+                               pagination_comment=pagination_comment
+                               )
+    else:
+        flash("You Aren't Authorized To Edit that Post", category="danger")
+        return redirect(url_for('dashboard', _anchor='personal_post',
+                                posts=posts,
+                                comments=comments,
+                                pagination_comment=pagination_comment,
+                                pagination_post=pagination_post))
+
+
+@app.route('/user/post/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def user_post_delete(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    id = current_user.id
+    page_post = request.args.get('page_post', 1, type=int)
+    pagination_post = Posts.query.filter_by(poster_id=id).order_by(Posts.date_posted).paginate(page=page_post,
+                                                                                               per_page=5)
+    posts = pagination_post.items
+
+    page_comment = request.args.get('page_comment', 1, type=int)
+    pagination_comment = Comments.query.filter_by(author_id=id).order_by(Comments.date_posted).paginate(
+        page=page_comment,
+        per_page=5)
+    comments = pagination_comment.items
+
+    if id == post_to_delete.poster.id or id == 1:
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash('Blog Post Was Deleted!', category="success")
+            return redirect(url_for('dashboard', _anchor='personal_post',
+                                    posts=posts,
+                                    pagination_comment=pagination_comment,
+                                    pagination_post=pagination_post))
+
+        except:
+            flash("Whoops! There was a problem, please try again!", category="warning")
+            return redirect(url_for('dashboard', _anchor='personal_post',
+                                    posts=posts,
+                                    pagination_comment=pagination_comment,
+                                    pagination_post=pagination_post))
+    else:
+        flash("You Aren't Authorized To Delete That Post!", category="danger")
+        return redirect(url_for('dashboard', _anchor='personal_post',
+                                posts=posts,
+                                pagination_comment=pagination_comment,
+                                pagination_post=pagination_post))
+
+
 @app.route('/comments/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_comment(id):
@@ -371,6 +466,80 @@ def delete_comment(id):
         flash("You Aren't Authorized To Delete That Post!", category="danger")
         return redirect(url_for('post', id=post_id))
 
+
+@app.route('/user/comment/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def user_comment_edit(id):
+    comment = Comments.query.get_or_404(id)
+    form = CommentForm()
+    page_post = request.args.get('page_post', 1, type=int)
+    pagination_post = Posts.query.filter_by(poster_id=id).order_by(Posts.date_posted).paginate(page=page_post,
+                                                                                               per_page=5)
+    posts = pagination_post.items
+    page_comment = request.args.get('page_comment', 1, type=int)
+    pagination_comment = Comments.query.filter_by(author_id=id).order_by(Comments.date_posted).paginate(
+        page=page_comment,
+        per_page=5)
+    comments = pagination_comment.items
+
+    if form.validate_on_submit():
+        comment.body = form.body.data
+        db.session.add(comment)
+        db.session.commit()
+        flash("Comment Has Been Updated", category="success")
+        return redirect(url_for('dashboard',
+                                id=comment.post_id,
+                                _anchor='personal_comment',
+                                posts=posts,
+                                comments=comments,
+                                pagination_comment=pagination_comment,
+                                pagination_post=pagination_post
+                                ))
+
+    if current_user.id == comment.author_id or current_user.id == 1:
+        form.body.data = comment.body
+        return render_template('user_comment_edit.html',
+                               form=form,
+                               id=comment.post_id,
+                               _anchor='personal_comment',
+                               posts=posts,
+                               comments=comments,
+                               pagination_comment=pagination_comment,
+                               pagination_post=pagination_post
+                               )
+
+    else:
+        flash("You Aren't Authorized To Edit that comment", category="danger")
+        return redirect(url_for('dashboard',
+                                id=comment.post_id,
+                                _anchor='personal_comment',
+                                posts=posts,
+                                comments=comments,
+                                pagination_comment=pagination_comment,
+                                pagination_post=pagination_post
+                                ))
+
+
+@app.route('/user/comment/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def user_comment_delete(id):
+    comment_to_delete = Comments.query.get_or_404(id)
+    id = current_user.id
+    post_id = comment_to_delete.post_id
+    if id == comment_to_delete.author_id or id == 1:
+
+        try:
+            db.session.delete(comment_to_delete)
+            db.session.commit()
+            flash('Comment Was Deleted!', category="success")
+            return redirect(url_for('dashboard', _anchor='personal_comment', id=post_id))
+
+        except:
+            flash("Whoops! There was a problem, please try again!", category="warning")
+            return redirect(url_for('dashboard', id=post_id))
+    else:
+        flash("You Aren't Authorized To Delete That Post!", category="danger")
+        return redirect(url_for('dashboard', id=post_id))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

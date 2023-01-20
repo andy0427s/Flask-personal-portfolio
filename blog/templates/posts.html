@@ -20,8 +20,8 @@
                class="btn btn-outline-secondary btn-sm">Edit Post</a>
 
             <a href="{{ url_for('delete_post', id=post.id) }}",
-               class="btn btn-outline-danger btn-sm",
-                data-toggle="modal" data-target="#postsModal">Delete Post</a>
+               class="btn btn-outline-danger btn-sm"
+                data-toggle="modal" data-target="#postsModal{{post.id}}">Delete Post</a>
             {% endif %}
         </div>
         <div class="posts-img-container">
@@ -31,9 +31,11 @@
         </div>
 
     </div>
+{% endfor %}
 
+{% for post in posts %}
     <!-- Modal -->
-    <div class="modal fade" id="postsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="postsModal{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">

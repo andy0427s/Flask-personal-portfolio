@@ -44,7 +44,7 @@
                         </a>
 
                         <a href="{{ url_for('admin_user_delete', id=user.id ) }}" class="tag is-danger is-light btn btn-danger btn-sm"
-                        , data-toggle="modal" data-target="#adminUserModal">
+                         data-toggle="modal" data-target="#adminUserModal{{user.id}}">
                             <span class="icon">
                                 <i class="mdi mdi-trash-can-outline"></i>
                             </span>
@@ -53,9 +53,10 @@
                     </div>
                 </td>
             </tr>
-
+            {% endfor %}
+            {% for user in users %}
             <!-- Modal -->
-            <div class="modal fade" id="adminUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="adminUserModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">

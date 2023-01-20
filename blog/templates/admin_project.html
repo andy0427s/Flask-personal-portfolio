@@ -37,7 +37,7 @@
                             Edit
                         </a>
                         <a href="{{ url_for('admin_project_delete', id=project.id ) }}" class="tag is-danger is-light btn btn-danger btn-sm"
-                        , data-toggle="modal" data-target="#adminProjectModal">
+                         data-toggle="modal" data-target="#adminProjectModal{{project.id}}">
                             <span class="icon">
                                 <i class="mdi mdi-trash-can-outline"></i>
                             </span>
@@ -46,8 +46,9 @@
                     </div>
                 </td>
             </tr>
-
-            <div class="modal fade" id="adminProjectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            {% endfor %}
+            {% for project in projects %}
+            <div class="modal fade" id="adminProjectModal{{project.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
