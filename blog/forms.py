@@ -38,7 +38,7 @@ class UserForm(FlaskForm):
                                                                                                    'Must '
                                                                                                    'Match!')])
     profile_pic = FileField("Profile Pic")
-    # recaptcha = RecaptchaField()
+    recaptcha = RecaptchaField()
     submit = SubmitField("Submit")
 
 
@@ -47,14 +47,14 @@ class PostForm(FlaskForm):
     content = CKEditorField("Content", validators=[DataRequired()])
     post_pic = FileField("Post Pic")
     poster_id = IntegerField("Poster Id")
-    # recaptcha = RecaptchaField()
+    recaptcha = RecaptchaField()
     submit = SubmitField("Submit")
 
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    # recaptcha = RecaptchaField()
+    recaptcha = RecaptchaField()
     submit = SubmitField('Login')
 
 
@@ -68,7 +68,7 @@ class CommentForm(FlaskForm):
     body = CKEditorField('Content', validators=[DataRequired()])
     author_id = IntegerField('Author Id')
     post_id = IntegerField('Post Id')
-    # recaptcha = RecaptchaField()
+    recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
 
 

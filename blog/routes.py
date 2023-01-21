@@ -541,6 +541,7 @@ def user_comment_delete(id):
         flash("You Aren't Authorized To Delete That Post!", category="danger")
         return redirect(url_for('dashboard', id=post_id))
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
