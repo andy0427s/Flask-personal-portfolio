@@ -2,7 +2,7 @@
 
 
 
-## Username
+## Student Username
 
 My username: c22011528
 
@@ -13,20 +13,35 @@ http://blog-c22011528.apps.openshift.cs.cf.ac.uk/
 
 ## Reference
 
-
-## How to run the code
-
-First of all, you need to install all dependencies using pip install -r requirements.txt (or equivalent). Then you can clone the project and run it.
-
-Finally, you can go to http://127.0.0.1:5000/ and run the website.
-
-Enjoy :)
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- sd
+- sad
+- asd
+- sad
 
 
-### Hello I am Andy
+## Installation
+- Python 3.5+ environment.
+
+## Quick Start Guide
+1. Clone this repository.
+2. Create a virtualenv and install the requirements. 
+```bash
+python venv venv 
+pip install -r requirements.txt
+```
+3. Change the URL for database configuration in the `init.py`
+```python
+app.config['SQLALCHEMY_DATABASE_URI'] = 'Your database URI'
+```
+The database URI that should be used for the connection. Examples:
+sqlite:////tmp/test.db
+mysql://username:password@server/db
+
+4. Set your MAIL_USERNAME and MAIL_PASSWORD to a valid Gmail account credentials (these will be used to send test emails) in `init.py`
+5. Cd to your project directory and run the flask using following command 
+```bash
+flask run 
+```
+6. Go to http://localhost:5000/ and enjoy this application! Enjoy :)
+
+
