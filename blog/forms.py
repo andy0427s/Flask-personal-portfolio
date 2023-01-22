@@ -47,7 +47,7 @@ class PostForm(FlaskForm):
     content = CKEditorField("Content", validators=[DataRequired()])
     post_pic = FileField("Post Pic")
     poster_id = IntegerField("Poster Id")
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField("Submit")
 
 
