@@ -29,6 +29,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Flask Mail config
+# Code to send the mail through the smtp connection
+# taken from mailtrap.io
+# accessed 10-01-2023
+# https://mailtrap.io/blog/flask-email-sending/
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
@@ -36,6 +40,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = "andy0427s@gmail.com"
 app.config['MAIL_PASSWORD'] = "opwcjwhvmsvopmqx"
 mail = Mail(app)
+# End of referenced code.
 
 # Flask Login manager
 login_manager = LoginManager()
