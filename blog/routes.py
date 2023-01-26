@@ -221,7 +221,7 @@ def add_post():
             upload_pic = request.files['post_pic']
             post_pic_filename = secure_filename(upload_pic.filename)
             # post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
-            with Image.open(upload_pic.profile_pic.stream) as i:
+            with Image.open(upload_pic.stream) as i:
                 i.thumbnail(output_size)
                 i.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_filename))
                 # post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_filename))
