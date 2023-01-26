@@ -145,17 +145,17 @@ def update(id):
             name_to_update.profile_pic = request.files['profile_pic']
             # Generate a unique/secure filename
             pic_filename = secure_filename(name_to_update.profile_pic.filename)
-            pic_name = str(uuid.uuid1()) + "_" + pic_filename
+            # pic_name = str(uuid.uuid1()) + "_" + pic_filename
             with Image.open(name_to_update.profile_pic.stream) as i:
                 i.thumbnail(output_size)
-                i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+                i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_filename))
 
             # Save the profile img to the static directory
             # basedir = os.path.abspath(os.path.dirname(__file__))
 
             # i.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
             # Save secured filename in db
-            name_to_update.profile_pic = pic_name
+            name_to_update.profile_pic = pic_filename
             try:
                 db.session.commit()
                 flash("User Updated Successfully", category="success")
@@ -217,13 +217,18 @@ def add_post():
         post_pic = form.post_pic.data
 
         if request.files['post_pic']:
-            post_pic_filename = secure_filename(post_pic.filename)
-            post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
-            post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_name))
+            output_size = (1280, 1280)
+            upload_pic = request.files['post_pic']
+            post_pic_filename = secure_filename(upload_pic.filename)
+            # post_pic_name = str(uuid.uuid1()) + "_" + post_pic_filename
+            with Image.open(upload_pic.profile_pic.stream) as i:
+                i.thumbnail(output_size)
+                i.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_filename))
+                # post_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], post_pic_filename))
             post = Posts(title=form.title.data,
                          content=form.content.data,
                          poster_id=poster,
-                         post_pic=post_pic_name)
+                         post_pic=post_pic_filename)
         else:
             post = Posts(title=form.title.data,
                          content=form.content.data,
