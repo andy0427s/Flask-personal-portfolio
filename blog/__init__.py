@@ -22,8 +22,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # DB Connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://c22011528:Twente0508$@csmysql.cs.cf.ac.uk:3306' \
-                                        '/c22011528_mydb'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://c22011528:Twente0508$@csmysql.cs.cf.ac.uk:3306' \
+#                                         '/c22011528_mydb'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MU5krwfPBsAxRY7mXA9U@containers-us-west-91.railway.app' \
+                                        ':6038/railway'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
