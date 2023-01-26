@@ -25,7 +25,7 @@ def index():
         user_name = form.name.data
         user_message = form.message.data
         send_mail(sender=user_email,
-                  recipients=["andylee22011528@gmail.com"],
+                  recipients=["andy0427s@gmail.com"],
                   subject='Notice from website visitors',
                   template='contact_mail',
                   mailtype='html',
