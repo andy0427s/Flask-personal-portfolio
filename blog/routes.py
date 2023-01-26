@@ -32,7 +32,7 @@ def index():
                   username=user_name,
                   message=user_message,
                   email=user_email)
-        flash("goodas", category="success")
+        flash("Thank you for contacting us!", category="success")
         form.email.data = ""
         form.name.data = ""
         form.message.data = ""
