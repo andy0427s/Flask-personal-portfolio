@@ -16,7 +16,7 @@ app.config["RECAPTCHA_PRIVATE_KEY"] = "6Ld-w_EjAAAAAPrqy3uaYdLCtDD151YcGR3H0NFF"
 
 # Uploaded file folder setting
 # UPLOAD_FOLDER = 'blog/static/img/'
-UPLOAD_FOLDER = './blog/static/img/'
+UPLOAD_FOLDER = 'blog/static/img/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # suppress SQLAlchemy warning
