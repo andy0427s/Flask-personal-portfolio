@@ -88,3 +88,4 @@ class Projects(db.Model):
     date_created = db.Column(db.Date, default="2022-09-26")
     img = db.Column(db.String(255), nullable=True)
     link = db.Column(db.String(255), nullable=True)
+    technology = db.Column(db.Text)
