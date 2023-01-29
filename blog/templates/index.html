@@ -54,20 +54,57 @@
                  <h5 class="about_text">My skills include Java, Python, Javascript, HTML/CSS, Flask/Spring framework and MySQL. In addition, I also have experience in using Linux, Git, Maven, JUnit and IntelliJ.
                     These skills cover most of the backend and full-stack developer requirements, ensuring that I am suitable for these positions. </h5>
                 <br>
-                <section class="skills-icons">
-                    <img src="../static/img/html-5.png" class="skill-icon" alt="HTML icon" width="64">
-                    <img src="../static/img/css-3.png" class="skill-icon" alt="CSS icon" width="64">
-                    <img src="../static/img/js.png" class="skill-icon" alt="Javascript icon" width="64">
-                    <img src="../static/img/java.png" class="skill-icon" alt="Java icon" width="64">
-                    <img src="../static/img/python.png" class="skill-icon" alt="Python icon" width="64">
-                    <img src="../static/img/spring.png" class="skill-icon" alt="Spring icon" width="64">
-                    <img src="../static/img/flask.png" class="skill-icon" alt="Flask icon" width="64">
-                    <img src="../static/img/mysql.png" class="skill-icon" alt="MySQL icon" width="64">
-                    <img src="../static/img/git.png" class="skill-icon" alt="Git icon" width="64">
-                    <img src="../static/img/linux.png" class="skill-icon" alt="Linux icon" width="64">
-                </section>
+<!--                <section class="skills-icons">-->
+<!--                    <img src="../static/img/html-5.png" class="skill-icon" alt="HTML icon" width="64">-->
+<!--                    <img src="../static/img/css-3.png" class="skill-icon" alt="CSS icon" width="64">-->
+<!--                    <img src="../static/img/js.png" class="skill-icon" alt="Javascript icon" width="64">-->
+<!--                    <img src="../static/img/java.png" class="skill-icon" alt="Java icon" width="64">-->
+<!--                    <img src="../static/img/python.png" class="skill-icon" alt="Python icon" width="64">-->
+<!--                    <img src="../static/img/spring.png" class="skill-icon" alt="Spring icon" width="64">-->
+<!--                    <img src="../static/img/flask.png" class="skill-icon" alt="Flask icon" width="64">-->
+<!--                    <img src="../static/img/mysql.png" class="skill-icon" alt="MySQL icon" width="64">-->
+<!--                    <img src="../static/img/git.png" class="skill-icon" alt="Git icon" width="64">-->
+<!--                    <img src="../static/img/linux.png" class="skill-icon" alt="Linux icon" width="64">-->
+<!--                </section>-->
+                <br>
+                <section class="card-deck">
+                    <div class="card col-4 mb-4 skill-card">
+                      <div class="card-body">
+                        <h5 class="card-title">Frond-End development</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/html-5.png" class="skill-icon" alt="HTML icon" width="32"> HTML</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/css-3.png" class="skill-icon" alt="CSS icon" width="32"> CSS</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/js.png" class="skill-icon" alt="Javascript icon" width="32">  Javascript</li>
+                        </ul>
+                      </div>
+                    </div>
 
+                    <div class="card col-4 mb-4 skill-card">
+                      <div class="card-body">
+                        <h5 class="card-title">Back-End development</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/java.png" class="skill-icon" alt="Java icon" width="32"> Java</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/python.png" class="skill-icon" alt="Python icon" width="32"> Python</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/mysql.png" class="skill-icon" alt="MySQL icon" width="32">  MySQL</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div class="card col-4 mb-4 skill-card">
+                      <div class="card-body">
+                        <h5 class="card-title">Technology and Tools</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/linux.png" class="skill-icon" alt="Linux icon" width="32"> Linux</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/git.png" class="skill-icon" alt="Git icon" width="32"> Git</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/flask.png" class="skill-icon" alt="Flask icon" width="32">  Flask framework</li>
+                            <li class="list-group-item " style="font-size: 20px"><img src="../static/img/spring.png" class="skill-icon" alt="Spring icon" width="32">  Spring framework</li>
+                        </ul>
+                      </div>
+                    </div>
+                </section>
             </div>
+
+
         </div>
         <br><br>
         <div class="row main-container">
@@ -78,7 +115,7 @@
                     {% for project in projects %}
                     <div class="col-4 mb-4">
                       <div class="card h-100">
-                        <img src="{{ url_for('static', filename='img/project/' +  project.img) }}" class="card-img-top" alt="..." style="width: 100%">
+                        <img src="{{ url_for('static', filename='img/project/' +  project.img) }}" class="card-img-top" alt="...">
                         <div class="card-body">
                           <h5 class="card-title">{{ project.title }}</h5>
                           <p class="card-text project-text">{{ project.content }}</p>

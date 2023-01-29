@@ -263,3 +263,22 @@ body {
 .project-text {
     text-align: left;
 }
+
+.card-img-top {
+    object-fit: cover;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    /*width: 70px;*/
+}
+
+.skill-card {
+    /*background-color: #C8C6C6;*/
+    /*color: #343A40;*/
+    background-color: #495464;
+    color: white;
+}
+
+.skill-card li {
+    background-color: #495464;
+    color: white;
+}
