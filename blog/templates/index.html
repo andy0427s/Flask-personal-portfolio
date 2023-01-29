@@ -81,11 +81,12 @@
                         <img src="{{ url_for('static', filename='img/project/' +  project.img) }}" class="card-img-top" alt="..." style="width: 100%">
                         <div class="card-body">
                           <h5 class="card-title">{{ project.title }}</h5>
-                          <p class="card-text">{{ project.content }}</p>
+                          <p class="card-text project-text">{{ project.content }}</p>
                           <p class="card-text"><small class="text-muted">Created: {{ project.date_created }}</small></p>
+                            <a href="{{ project.link }}" class="card-link"><img src="../static/img/link-github.png" width="35"></a>
                         </div>
                           <div class="card-footer">
-                              <a href="https://github.com/" class="card-link"><img src="../static/img/link-github.png" width="35"></a>
+                              Technologies: {{ project.technology }}
                           </div>
                       </div>
                     </div>
