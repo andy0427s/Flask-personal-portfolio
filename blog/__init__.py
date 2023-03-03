@@ -26,7 +26,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://c22011528:Twente0508$@csmysql.cs.cf.ac.uk:3306' \
 #                                         '/c22011528_mydb'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MU5krwfPBsAxRY7mXA9U@containers-us-west-91.railway.app' \
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:2gVoB3fHMsXn9Pq8IzJV@containers-us-west-91.railway.app' \
                                         ':6038/railway'
 
 db = SQLAlchemy(app)
