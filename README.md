@@ -1,11 +1,5 @@
 # Flask Personal Portfolio with blog
 
-
-
-## Student Username
-
-My username: c22011528
-
 ## Installation
 - Python 3.5+ environment.
 
