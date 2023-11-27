@@ -7,7 +7,8 @@
 1. Clone this repository.
 2. Create a virtualenv and install all dependencies in `requirement.txt`. 
 ```bash
-python3 -m venv venv 
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 3. Change the URL for database configuration in the `init.py`
